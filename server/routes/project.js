@@ -3,6 +3,62 @@ const InternalProject = require('../models/internalProject');
 const ExternalProject = require('../models/externalProject');
 const app = express();
 
+
+// =======================================
+// CREATE EXTERNAL PROJECTS
+// =======================================
+
+app.post('/createExternalProject', (req, res) => {
+    let id = '5c9cf67b1804bf1170e99ac4';
+    let name = req.body.name;
+    let description = req.body.description;
+    let url = req.body.url;
+
+    let externalProject = new ExternalProject({
+        user: id,
+        name: name,
+        description: description,
+        url: url
+    });
+
+    externalProject.save((err, internalDB) => {
+        if (err) {
+            return res.status(400).json({
+                ok: false,
+                err
+            });
+        }
+
+        res.json({
+            ok: true,
+            internalProject: internalDB
+        });
+    });
+});
+
+// =======================================
+// OBTAIN AL EXTERNAL PROJECTS  BY ID
+// =======================================
+
+app.get('/externalProjects/:id', (req, res) => {
+    var id = req.params.id;
+    ExternalProject.find({ user: id })
+        .populate()
+        .exec((err, externalProject) => {
+            if (err) {
+                return res.status(400).json({
+                    ok: false,
+                    err
+                });
+            }
+
+            res.json({
+                ok: true,
+                externalProject
+            });
+        })
+});
+
 // =======================================
 // CREATE INTERNAL PROJECTS
 // =======================================
@@ -47,40 +103,10 @@ app.post('/createInternalProject', (req, res) => {
     });
 });
 
-// =======================================
-// CREATE EXTERNAL PROJECTS
-// =======================================
 
-app.post('/createExternalProject', (req, res) => {
-    let id = '5c9cf67b1804bf1170e99ac4';
-    let name = req.body.name;
-    let description = req.body.description;
-    let url = req.body.url;
-
-    let externalProject = new ExternalProject({
-        user: id,
-        name: name,
-        description: description,
-        url: url
-    });
-
-    externalProject.save((err, internalDB) => {
-        if (err) {
-            return res.status(400).json({
-                ok: false,
-                err
-            });
-        }
-
-        res.json({
-            ok: true,
-            internalProject: internalDB
-        });
-    });
-});
 
 /**
- * OBTAIN ALL PROJECTS
+ * OBTAIN ALL INTERNAL PROJECTS
  */
 
 app.get('/obtainAllProjects', (req, res) => {
@@ -101,7 +127,7 @@ app.get('/obtainAllProjects', (req, res) => {
 });
 
 /**
- * OBTAIN ALL PROJECTS OF A COMPANY
+ * OBTAIN ALL INTERNAL PROJECTS OF A COMPANY
  */
 
 app.get('/obtainAllProjects/:id', (req, res) => {
@@ -130,7 +156,7 @@ app.get('/obtainAllProjects/:id', (req, res) => {
 });
 
 /**
- * OBTAIN A PROJECT BY ID
+ * OBTAIN A INTERNAL PROJECT BY ID
  */
 
 app.get('/obtainProject/:id', (req, res) => {
@@ -159,10 +185,10 @@ app.get('/obtainProject/:id', (req, res) => {
 });
 
 /**
- * OBTAIN A PROJECT BY SKILLS (TERMINAR DE HACER)
+ * OBTAIN A INTERNAL PROJECT BY SKILLS (TERMINAR DE HACER)
  */
 
-/* app.get('/obtainProject', (req, res) => {
+app.get('/obtainProject', (req, res) => {
     let skills = req.body.skills;
     InternalProject.find({ skills: skills }, (err, internalProjects) => {
         if (err) {
@@ -189,11 +215,11 @@ app.get('/obtainProject/:id', (req, res) => {
 
 
 
-}); */
+});
 
 
 /**
- * OBTAIN A PROJECT BY NAME
+ * OBTAIN A INTERNAL PROJECT BY NAME
  */
 
 app.get('/obtainProjectName', (req, res) => {
@@ -222,7 +248,7 @@ app.get('/obtainProjectName', (req, res) => {
 });
 
 /**
- * OBTAIN A PROJECT BY DATE
+ * OBTAIN A INTERNAL PROJECT BY DATE
  */
 
 app.get('/obtainProjectDate', (req, res) => {

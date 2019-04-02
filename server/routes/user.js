@@ -1,7 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-//const _ = require('underscore');
+const _ = require('underscore');
 const User = require('../models/user');
 const Company = require('../models/company');
 const path = require('path');
@@ -186,6 +186,11 @@ app.post('/registerCompany', (req, res) => {
     });
 });
 
+// =======================================
+// COMPANY METHODS
+// =======================================
+
+
 app.get('/obtainContacts/:id', (req, res) => {
     let id = req.params.id;
 
@@ -212,5 +217,63 @@ app.get('/obtainContacts/:id', (req, res) => {
 });
 
 
+// =======================================
+// USERS METHODS
+// =======================================
+
+app.get('/getUser/:id', (req, res) => {
+    var id = req.params.id;
+    User.findById(id, function(err, user) {
+        if (err) {
+            return res.status(400).json({
+                ok: false,
+                err
+            });
+        }
+
+        res.json({
+            ok: true,
+            user
+        });
+    });
+});
+
+
+app.get('/getCertificates/:id', (req, res) => {
+    var id = req.params.id;
+    User.find({ _id: id }).select("certificates")
+        .populate()
+        .exec((err, userCertificates) => {
+            if (err) {
+                return res.status(400).json({
+                    ok: false,
+                    err
+                });
+            }
+            res.json({
+                ok: true,
+                userCertificates
+            });
+        })
+});
+
+
+app.get('/getCourses/:id', (req, res) => {
+    var id = req.params.id;
+    User.find({ _id: id }).select("courses")
+        .populate()
+        .exec((err, userCourses) => {
+            if (err) {
+                return res.status(400).json({
+                    ok: false,
+                    err
+                });
+            }
+            res.json({
+                ok: true,
+                userCourses
+            });
+        })
+});
 
 module.exports = app;
