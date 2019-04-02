@@ -18,7 +18,7 @@ let companySchema = new Schema({
         unique: true,
         required: [true, 'Email must be neccesary']
     },
-    emailContacto: {
+    contactEmail: {
         type: String,
         unique: true,
         required: [true, 'EmailContact must be neccesary']
@@ -59,6 +59,10 @@ let companySchema = new Schema({
     cif: {
         type: String,
         required: true
+    },
+    contacts: {
+        type: Array,
+        default: {}
     }
 
 });

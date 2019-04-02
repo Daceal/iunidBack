@@ -10,6 +10,11 @@ const app = express();
 
 
 
+// =======================================
+// USERS LOGIN
+// =======================================
+
+
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, '../views', 'login.html'));
 });
@@ -56,8 +61,17 @@ app.post('/login', (req, res) => {
 
 });
 
+
+// =======================================
+// USERS REGISTERS
+// =======================================
+
+
 app.get('/register', (req, res) => {
-    res.sendFile(path.join(__dirname, '../views', 'registro.html'));
+    res.json({
+        ok: true,
+        message: 'This is the register page'
+    });
 });
 
 app.post('/registerUser', (req, res) => {
@@ -75,7 +89,7 @@ app.post('/registerUser', (req, res) => {
         if (userDB) {
             return res.status(404).json({
                 ok: false,
-                err: 'El email está registrado'
+                err: 'The email is already registered'
             });
         }
 
@@ -121,7 +135,25 @@ app.post('/registerCompany', (req, res) => {
         if (companyDB) {
             return res.status(404).json({
                 ok: false,
-                err: 'El email está registrado'
+                err: 'The email is already registered'
+            });
+        }
+
+        if (!cif) {
+            return res.json({
+                ok: false,
+                err: {
+                    message: 'The cif is empty'
+                }
+            });
+        }
+
+        if (!contactEmail) {
+            return res.json({
+                ok: false,
+                err: {
+                    message: 'The contactEmail is empty'
+                }
             });
         }
 
@@ -132,7 +164,7 @@ app.post('/registerCompany', (req, res) => {
                 cif: body.cif,
                 description: body.description,
                 img: body.img,
-                emailContacto: body.emailContacto,
+                contactEmail: body.contactEmail,
                 password: bcrypt.hashSync(body.password, 10)
             });
 
@@ -154,88 +186,31 @@ app.post('/registerCompany', (req, res) => {
     });
 });
 
-
-
-/* app.post('/usuario', function(req, res) {
-
-    let body = req.body;
-
-    let usuario = new Usuario({
-        nombre: body.nombre,
-        email: body.email,
-        password: bcrypt.hashSync(body.password, 10),
-        role: body.role
-    });
-
-    usuario.save((err, usuarioDB) => {
-        if (err) {
-            return res.status(400).json({
-                ok: false,
-                err
-            });
-        }
-
-        res.json({
-            ok: true,
-            usuario: usuarioDB
-        });
-    });
-}); 
-
-app.put('/user/:id', [checkToken, checkAdmin_Role], function(req, res) {
-
+app.get('/obtainContacts/:id', (req, res) => {
     let id = req.params.id;
-    let body = _.pick(req.body, ['name', 'email', 'img', 'role', 'state']);
 
-    User.findByIdAndUpdate(id, body, { new: true, runValidators: true }, (err, userDB) => {
-
+    Company.findById(id, 'contacts', (err, company) => {
         if (err) {
-            return res.status(400).json({
+            return res.status(500).json({
                 ok: false,
                 err
             });
         }
 
+        if (!company) {
+            return res.status(500).json({
+                ok: false,
+                err: 'The company dont exists'
+            });
+        }
+
         res.json({
             ok: true,
-            user: userDB
+            company
         });
-
-    })
+    });
 });
 
-app.delete('/user/:id', checkToken, function(req, res) {
 
-    let id = req.params.id;
-    let changeState = {
-        state: false
-    };
-
-    //Usuario.findByIdAndRemove(id, (err, usuarioBorrado) => {
-    User.findByIdAndUpdate(id, changeState, { new: true }, (err, userDeleted) => {
-        if (err) {
-            return res.status(400).json({
-                ok: false,
-                err
-            });
-        };
-
-        if (!userDeleted) {
-            return res.status(400).json({
-                ok: false,
-                err: {
-                    message: 'User not found'
-                }
-            });
-        }
-
-        res.json({
-            ok: true,
-            usuario: userDeleted
-        });
-
-    });
-
-});*/
 
 module.exports = app;

@@ -3,6 +3,10 @@ const InternalProject = require('../models/internalProject');
 const ExternalProject = require('../models/externalProject');
 const app = express();
 
+// =======================================
+// CREATE INTERNAL PROJECTS
+// =======================================
+
 app.post('/createInternalProject', (req, res) => {
     let id = '5c9cf845f439f63c4c24cc6a';
     let name = req.body.name;
@@ -43,6 +47,10 @@ app.post('/createInternalProject', (req, res) => {
     });
 });
 
+// =======================================
+// CREATE EXTERNAL PROJECTS
+// =======================================
+
 app.post('/createExternalProject', (req, res) => {
     let id = '5c9cf67b1804bf1170e99ac4';
     let name = req.body.name;
@@ -67,6 +75,177 @@ app.post('/createExternalProject', (req, res) => {
         res.json({
             ok: true,
             internalProject: internalDB
+        });
+    });
+});
+
+/**
+ * OBTAIN ALL PROJECTS
+ */
+
+app.get('/obtainAllProjects', (req, res) => {
+    InternalProject.find({ state: 'Open' }, 'name description')
+        .exec((err, internalProjects) => {
+            if (err) {
+                return res.json({
+                    ok: false,
+                    err
+                });
+            }
+
+            res.json({
+                ok: true,
+                internalProjects
+            });
+        });
+});
+
+/**
+ * OBTAIN ALL PROJECTS OF A COMPANY
+ */
+
+app.get('/obtainAllProjects/:id', (req, res) => {
+    let id = req.params.id;
+    InternalProject.find({ user: id }, (err, internalProjects) => {
+        if (err) {
+            return res.json({
+                ok: false,
+                err
+            });
+        }
+
+        if (!internalProjects) {
+            return res.json({
+                ok: false,
+                message: 'This company doesnt have a project'
+            })
+        }
+
+        return res.json({
+            ok: true,
+            internalProjects
+        });
+
+    });
+});
+
+/**
+ * OBTAIN A PROJECT BY ID
+ */
+
+app.get('/obtainProject/:id', (req, res) => {
+    let id = req.params.id;
+    InternalProject.findById(id, 'name description')
+        .exec((err, internalProjects) => {
+            if (err) {
+                return res.json({
+                    ok: false,
+                    err
+                });
+            }
+
+            if (!internalProjects) {
+                return res.json({
+                    ok: false,
+                    message: 'There is not id'
+                })
+            }
+
+            res.json({
+                ok: true,
+                internalProjects
+            });
+        });
+});
+
+/**
+ * OBTAIN A PROJECT BY SKILLS (TERMINAR DE HACER)
+ */
+
+/* app.get('/obtainProject', (req, res) => {
+    let skills = req.body.skills;
+    InternalProject.find({ skills: skills }, (err, internalProjects) => {
+        if (err) {
+            return res.json({
+                ok: false,
+                err
+            });
+        }
+
+        res.json({
+            ok: true,
+            internalProjects
+        });
+    });
+
+    var arr = ["1", "2", "3"];
+    var res = ["y", "n", "y"];
+
+    var result = arr.filter(function(e, i) {
+        return res[i] == 'y'
+    })
+
+    console.log(result)
+
+
+
+}); */
+
+
+/**
+ * OBTAIN A PROJECT BY NAME
+ */
+
+app.get('/obtainProjectName', (req, res) => {
+    let name = req.body.name;
+
+    InternalProject.find({ name: name }, (err, internalProjects) => {
+        if (err) {
+            return res.json({
+                ok: false,
+                err
+            });
+        }
+
+        if (!internalProjects) {
+            return res.json({
+                ok: false,
+                message: 'There is not a project with this name'
+            })
+        }
+
+        res.json({
+            ok: true,
+            internalProjects
+        });
+    });
+});
+
+/**
+ * OBTAIN A PROJECT BY DATE
+ */
+
+app.get('/obtainProjectDate', (req, res) => {
+    let date = req.body.date;
+
+    InternalProject.find({ date: date }, (err, internalProjects) => {
+        if (err) {
+            return res.json({
+                ok: false,
+                err
+            });
+        }
+
+        if (!internalProjects) {
+            return res.json({
+                ok: false,
+                message: 'There is not a project with this date'
+            })
+        }
+
+        res.json({
+            ok: true,
+            internalProjects
         });
     });
 });
