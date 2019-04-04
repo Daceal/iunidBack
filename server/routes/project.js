@@ -1,6 +1,7 @@
 const express = require('express');
 const InternalProject = require('../models/internalProject');
 const ExternalProject = require('../models/externalProject');
+const { checkToken, checkAdmin_Role } = require('../middlewares/authentication');
 const app = express();
 
 
@@ -8,8 +9,8 @@ const app = express();
 // CREATE EXTERNAL PROJECTS
 // =======================================
 
-app.post('/createExternalProject', (req, res) => {
-    let id = '5c9cf67b1804bf1170e99ac4';
+app.post('/createExternalProject', checkToken, (req, res) => {
+    let id = req.body.id;
     let name = req.body.name;
     let description = req.body.description;
     let url = req.body.url;
@@ -21,7 +22,7 @@ app.post('/createExternalProject', (req, res) => {
         url: url
     });
 
-    externalProject.save((err, internalDB) => {
+    externalProject.save((err, externalDB) => {
         if (err) {
             return res.status(400).json({
                 ok: false,
@@ -31,7 +32,7 @@ app.post('/createExternalProject', (req, res) => {
 
         res.json({
             ok: true,
-            internalProject: internalDB
+            externalProject: externalDB
         });
     });
 });
@@ -40,9 +41,9 @@ app.post('/createExternalProject', (req, res) => {
 // OBTAIN AL EXTERNAL PROJECTS  BY ID
 // =======================================
 
-app.get('/externalProjects/:id', (req, res) => {
-    var id = req.params.id;
-    ExternalProject.find({ user: id })
+app.get('/externalProjects', (req, res) => {
+    let email = req.body.email;
+    ExternalProject.find({ email: email })
         .populate()
         .exec((err, externalProject) => {
             if (err) {
@@ -64,10 +65,10 @@ app.get('/externalProjects/:id', (req, res) => {
 // =======================================
 
 app.post('/createInternalProject', (req, res) => {
-    let id = '5c9cf845f439f63c4c24cc6a';
+    let id = req.body.id;
     let name = req.body.name;
     let description = req.body.description;
-    let skills = req.body.skills;
+    let tags = req.body.tags;
     let files = req.body.files;
     let minPrice = req.body.minPrice;
     let maxPrice = req.body.maxPrice;
@@ -79,7 +80,7 @@ app.post('/createInternalProject', (req, res) => {
         user: id,
         name: name,
         description: description,
-        tags: skills,
+        tags: tags,
         files: files,
         minPrice: minPrice,
         maxPrice: maxPrice,

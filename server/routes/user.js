@@ -190,7 +190,7 @@ app.post('/registerCompany', (req, res) => {
 // =======================================
 
 
-app.post('/obtainContacts/:email', (req, res) => {
+app.post('/obtainContacts', (req, res) => {
     let email = req.body.email;
 
     Company.findOne(email, 'contacts', (err, company) => {
@@ -220,10 +220,35 @@ app.post('/obtainContacts/:email', (req, res) => {
 // USERS METHODS
 // =======================================
 
-app.post('/getUser/:email', checkToken, (req, res) => {
+app.post('/getCompany', checkToken, (req, res) => {
     var email = req.body.email;
 
-    User.findOne(email, 'name email description score skills curses certificates img', function(err, user) {
+    Company.findOne({ email: email }, 'name email contactEmail description score img contacts', function(err, company) {
+        if (err) {
+            return res.status(400).json({
+                ok: false,
+                err
+            });
+        }
+
+        if (!company) {
+            return res.status(403).json({
+                ok: false,
+                err: 'The email is invalid'
+            });
+        }
+
+        res.json({
+            ok: true,
+            company
+        });
+    });
+});
+
+app.post('/getUser', checkToken, (req, res) => {
+    var email = req.body.email;
+
+    User.findOne({ email: email }, 'name email description score skills curses certificates img', function(err, user) {
         if (err) {
             return res.status(400).json({
                 ok: false,
