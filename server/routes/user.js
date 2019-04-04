@@ -14,11 +14,6 @@ const app = express();
 // USERS LOGIN
 // =======================================
 
-
-app.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, '../views', 'login.html'));
-});
-
 app.post('/login', (req, res) => {
     let body = req.body;
 
@@ -55,7 +50,8 @@ app.post('/login', (req, res) => {
 
         res.json({
             ok: true,
-            userDB
+            userDB,
+            token
         });
     })
 
@@ -66,13 +62,6 @@ app.post('/login', (req, res) => {
 // USERS REGISTERS
 // =======================================
 
-
-app.get('/register', (req, res) => {
-    res.json({
-        ok: true,
-        message: 'This is the register page'
-    });
-});
 
 app.post('/registerUser', (req, res) => {
 
@@ -91,30 +80,38 @@ app.post('/registerUser', (req, res) => {
                 ok: false,
                 err: 'The email is already registered'
             });
-        }
+        } else {
+            Company.findOne({ email: body.email }, (err, check) => {
+                if (!check) {
+                    let user = new User({
+                        email: body.email,
+                        name: body.name,
+                        skills: body.skills,
+                        courses: body.courses,
+                        description: body.description,
+                        certificates: body.certificates,
+                        password: bcrypt.hashSync(body.password, 10)
+                    });
 
-        if (!userDB) {
-            let user = new User({
-                email: body.email,
-                name: body.name,
-                skills: body.skills,
-                courses: body.courses,
-                certificates: body.certificates,
-                password: bcrypt.hashSync(body.password, 10)
-            });
+                    user.save((err, userDB) => {
+                        if (err) {
+                            return res.status(400).json({
+                                ok: false,
+                                err
+                            });
+                        }
 
-            user.save((err, userDB) => {
-                if (err) {
-                    return res.status(400).json({
+                        res.json({
+                            ok: true,
+                            user: userDB
+                        });
+                    });
+                } else {
+                    res.json({
                         ok: false,
-                        err
+                        err: 'The email must be unique'
                     });
                 }
-
-                res.json({
-                    ok: true,
-                    user: userDB
-                });
             });
         }
     });
@@ -132,55 +129,57 @@ app.post('/registerCompany', (req, res) => {
             });
         }
 
+        if (!body.cif) {
+            return res.status(404).json({
+                ok: false,
+                err: 'The cif is empty'
+            });
+        }
+
+        if (!body.contactEmail) {
+            return res.status(404).json({
+                ok: false,
+                err: 'The contact email is empty'
+            });
+        }
+
         if (companyDB) {
             return res.status(404).json({
                 ok: false,
                 err: 'The email is already registered'
             });
-        }
+        } else {
+            User.findOne({ email: body.email }, (err, check) => {
+                if (!check) {
+                    let company = new Company({
+                        email: body.email,
+                        name: body.name,
+                        cif: body.cif,
+                        description: body.description,
+                        img: body.img,
+                        contactEmail: body.contactEmail,
+                        password: bcrypt.hashSync(body.password, 10)
+                    });
 
-        if (!cif) {
-            return res.json({
-                ok: false,
-                err: {
-                    message: 'The cif is empty'
-                }
-            });
-        }
+                    company.save((err, companyDB) => {
+                        if (err) {
+                            return res.status(400).json({
+                                ok: false,
+                                err
+                            });
+                        }
 
-        if (!contactEmail) {
-            return res.json({
-                ok: false,
-                err: {
-                    message: 'The contactEmail is empty'
-                }
-            });
-        }
-
-        if (!companyDB) {
-            let company = new Company({
-                email: body.email,
-                name: body.name,
-                cif: body.cif,
-                description: body.description,
-                img: body.img,
-                contactEmail: body.contactEmail,
-                password: bcrypt.hashSync(body.password, 10)
-            });
-
-            company.save((err, companyDB) => {
-                if (err) {
-                    return res.status(400).json({
+                        res.json({
+                            ok: true,
+                            company: companyDB
+                        });
+                    });
+                } else {
+                    res.json({
                         ok: false,
-                        err
+                        err: 'The email must be unique'
                     });
                 }
-
-                //res.sendFile(path.join(__dirname, '../views', 'dashboard.html'));
-                res.json({
-                    ok: true,
-                    company: companyDB
-                });
             });
         }
     });
@@ -191,10 +190,10 @@ app.post('/registerCompany', (req, res) => {
 // =======================================
 
 
-app.get('/obtainContacts/:id', (req, res) => {
-    let id = req.params.id;
+app.post('/obtainContacts/:email', (req, res) => {
+    let email = req.body.email;
 
-    Company.findById(id, 'contacts', (err, company) => {
+    Company.findOne(email, 'contacts', (err, company) => {
         if (err) {
             return res.status(500).json({
                 ok: false,
@@ -221,13 +220,21 @@ app.get('/obtainContacts/:id', (req, res) => {
 // USERS METHODS
 // =======================================
 
-app.get('/getUser/:id', (req, res) => {
-    var id = req.params.id;
-    User.findById(id, function(err, user) {
+app.post('/getUser/:email', checkToken, (req, res) => {
+    var email = req.body.email;
+
+    User.findOne(email, 'name email description score skills curses certificates img', function(err, user) {
         if (err) {
             return res.status(400).json({
                 ok: false,
                 err
+            });
+        }
+
+        if (!user) {
+            return res.status(403).json({
+                ok: false,
+                err: 'The email is invalid'
             });
         }
 
@@ -236,44 +243,6 @@ app.get('/getUser/:id', (req, res) => {
             user
         });
     });
-});
-
-
-app.get('/getCertificates/:id', (req, res) => {
-    var id = req.params.id;
-    User.find({ _id: id }).select("certificates")
-        .populate()
-        .exec((err, userCertificates) => {
-            if (err) {
-                return res.status(400).json({
-                    ok: false,
-                    err
-                });
-            }
-            res.json({
-                ok: true,
-                userCertificates
-            });
-        })
-});
-
-
-app.get('/getCourses/:id', (req, res) => {
-    var id = req.params.id;
-    User.find({ _id: id }).select("courses")
-        .populate()
-        .exec((err, userCourses) => {
-            if (err) {
-                return res.status(400).json({
-                    ok: false,
-                    err
-                });
-            }
-            res.json({
-                ok: true,
-                userCourses
-            });
-        })
 });
 
 module.exports = app;

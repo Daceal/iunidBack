@@ -1,8 +1,8 @@
 const express = require('express');
 const app = express();
+const { checkToken } = require('../middlewares/authentication');
 
 app.use(require('./user'));
 app.use(require('./project'));
-app.use(require('./viewsRoutes'));
 
 module.exports = app;

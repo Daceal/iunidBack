@@ -19,6 +19,13 @@ app.use(express.static(path.resolve(__dirname, '../public')));
 // global configurations of routes
 app.use(require('./routes/index'));
 
+app.use(function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*'); // * => allow all origins
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,OPTIONS,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, X-Auth-Token, Accept'); // add remove headers according to your needs
+    next();
+})
+
 mongoose.connect(process.env.URLDB, { useNewUrlParser: true, useCreateIndex: true }, (err, res) => {
     if (err) throw err;
 

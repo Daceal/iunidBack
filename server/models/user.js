@@ -26,7 +26,7 @@ let userSchema = new Schema({
         type: String,
         required: false
     },
-    telefono: {
+    phone: {
         type: String,
         required: false
     },
@@ -42,7 +42,7 @@ let userSchema = new Schema({
         type: Array,
         default: []
     },
-    courses: {
+    curses: {
         type: Array,
         default: {}
     },
