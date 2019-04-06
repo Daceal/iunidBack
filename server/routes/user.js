@@ -57,14 +57,14 @@ app.post('/login', (req, res) => {
                     company: companyDB
                 }, process.env.SEED, { expiresIn: process.env.tokenExpiration });
 
-                res.json({
+                return res.json({
                     ok: true,
                     companyDB,
                     token
                 });
             });
         }
-
+        console.log('Password', body.password, userDB.password);
         if (!bcrypt.compareSync(body.password, userDB.password)) {
             return res.status(400).json({
                 ok: false,
