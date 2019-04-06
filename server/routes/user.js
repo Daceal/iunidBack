@@ -53,7 +53,44 @@ app.post('/login', (req, res) => {
             userDB,
             token
         });
-    })
+    });
+
+    Company.findOne({ email: body.email }, (err, companyDB) => {
+        if (err) {
+            return res.status(500).json({
+                ok: false,
+                err
+            });
+        }
+
+        if (!companyDB) {
+            return res.status(400).json({
+                ok: false,
+                err: {
+                    message: 'User or password incorrect'
+                }
+            });
+        }
+
+        if (!bcrypt.compareSync(body.password, companyDB.password)) {
+            return res.status(400).json({
+                ok: false,
+                err: {
+                    message: 'User or password incorrect'
+                }
+            });
+        }
+
+        let token = jwt.sign({
+            company: companyDB
+        }, process.env.SEED, { expiresIn: process.env.tokenExpiration });
+
+        res.json({
+            ok: true,
+            companyDB,
+            token
+        });
+    });
 
 });
 
