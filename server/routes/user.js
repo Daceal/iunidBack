@@ -26,7 +26,27 @@ app.post('/login', (req, res) => {
             });
         }
 
-        if (!userDB) {
+        if (userDB) {
+            if (!bcrypt.compareSync(body.password, userDB.password)) {
+                return res.status(400).json({
+                    ok: false,
+                    err: {
+                        message: 'User or password incorrect'
+                    }
+                });
+            }
+
+            let token = jwt.sign({
+                user: userDB
+            }, process.env.SEED, { expiresIn: process.env.tokenExpiration });
+
+            res.json({
+                ok: true,
+                userDB,
+                token
+            });
+
+        } else {
             Company.findOne({ email: body.email }, (err, companyDB) => {
                 if (err) {
                     return res.status(500).json({
@@ -57,32 +77,14 @@ app.post('/login', (req, res) => {
                     company: companyDB
                 }, process.env.SEED, { expiresIn: process.env.tokenExpiration });
 
-                return res.json({
+                res.json({
                     ok: true,
                     companyDB,
                     token
                 });
             });
         }
-        console.log('Password', body.password, userDB.password);
-        if (!bcrypt.compareSync(body.password, userDB.password)) {
-            return res.status(400).json({
-                ok: false,
-                err: {
-                    message: 'User or password incorrect'
-                }
-            });
-        }
 
-        let token = jwt.sign({
-            user: userDB
-        }, process.env.SEED, { expiresIn: process.env.tokenExpiration });
-
-        res.json({
-            ok: true,
-            userDB,
-            token
-        });
     });
 });
 
