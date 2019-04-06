@@ -7,6 +7,11 @@ let estadosProyecto = {
     message: '{VALUE} is not a valid state'
 };
 
+let validOrigins = {
+    values: ['cliente', 'empleador'],
+    message: '{VALUE} is not a valid state'
+};
+
 let Schema = mongoose.Schema;
 
 let internalProjectSchema = new Schema({
@@ -58,6 +63,11 @@ let internalProjectSchema = new Schema({
     user: {
         type: String,
         required: true
+    },
+    origin: {
+        type: String,
+        required: true,
+        enum: validOrigins
     }
 });
 

@@ -10,13 +10,13 @@ const app = express();
 // =======================================
 
 app.post('/createExternalProject', checkToken, (req, res) => {
-    let id = req.body.id;
+    let email = req.body.email;
     let name = req.body.name;
     let description = req.body.description;
     let url = req.body.url;
 
     let externalProject = new ExternalProject({
-        user: id,
+        user: email,
         name: name,
         description: description,
         url: url
@@ -65,7 +65,7 @@ app.get('/externalProjects', (req, res) => {
 // =======================================
 
 app.post('/createInternalProject', (req, res) => {
-    let id = req.body.id;
+    let email = req.body.email;
     let name = req.body.name;
     let description = req.body.description;
     let tags = req.body.tags;
@@ -75,9 +75,10 @@ app.post('/createInternalProject', (req, res) => {
     let initialDate = req.body.initialDate;
     let deliveryDate = req.body.deliveryDate;
     let counterOffer = req.body.counterOffer;
+    let origin = req.body.origin;
 
     let internalProject = new InternalProject({
-        user: id,
+        user: email,
         name: name,
         description: description,
         tags: tags,
@@ -86,7 +87,8 @@ app.post('/createInternalProject', (req, res) => {
         maxPrice: maxPrice,
         initialDate: initialDate,
         deliveryDate: deliveryDate,
-        counteroffer: counterOffer
+        counteroffer: counterOffer,
+        origin: origin
     });
 
     internalProject.save((err, internalDB) => {
@@ -104,36 +106,14 @@ app.post('/createInternalProject', (req, res) => {
     });
 });
 
-
-
 /**
- * OBTAIN ALL INTERNAL PROJECTS
+ * OBTAIN ALL INTERNAL PROJECTS, EXTERNAL PROJECTS, PROJECTS WHO IS WORKING AT
  */
 
-app.get('/obtainAllProjects', (req, res) => {
-    InternalProject.find({ state: 'Open' }, 'name description')
-        .exec((err, internalProjects) => {
-            if (err) {
-                return res.json({
-                    ok: false,
-                    err
-                });
-            }
+app.post('/obtainAllProjects', (req, res) => {
+    let email = req.body.email;
 
-            res.json({
-                ok: true,
-                internalProjects
-            });
-        });
-});
-
-/**
- * OBTAIN ALL INTERNAL PROJECTS OF A COMPANY
- */
-
-app.get('/obtainAllProjects/:id', (req, res) => {
-    let id = req.params.id;
-    InternalProject.find({ user: id }, (err, internalProjects) => {
+    InternalProject.find({ user: email }, (err, internalProjects) => {
         if (err) {
             return res.json({
                 ok: false,
@@ -144,7 +124,7 @@ app.get('/obtainAllProjects/:id', (req, res) => {
         if (!internalProjects) {
             return res.json({
                 ok: false,
-                message: 'This company doesnt have a project'
+                message: 'This user doesn\'t have a project'
             })
         }
 
@@ -155,69 +135,6 @@ app.get('/obtainAllProjects/:id', (req, res) => {
 
     });
 });
-
-/**
- * OBTAIN A INTERNAL PROJECT BY ID
- */
-
-app.get('/obtainProject/:id', (req, res) => {
-    let id = req.params.id;
-    InternalProject.findById(id, 'name description')
-        .exec((err, internalProjects) => {
-            if (err) {
-                return res.json({
-                    ok: false,
-                    err
-                });
-            }
-
-            if (!internalProjects) {
-                return res.json({
-                    ok: false,
-                    message: 'There is not id'
-                })
-            }
-
-            res.json({
-                ok: true,
-                internalProjects
-            });
-        });
-});
-
-/**
- * OBTAIN A INTERNAL PROJECT BY SKILLS (TERMINAR DE HACER)
- */
-
-app.get('/obtainProject', (req, res) => {
-    let skills = req.body.skills;
-    InternalProject.find({ skills: skills }, (err, internalProjects) => {
-        if (err) {
-            return res.json({
-                ok: false,
-                err
-            });
-        }
-
-        res.json({
-            ok: true,
-            internalProjects
-        });
-    });
-
-    var arr = ["1", "2", "3"];
-    var res = ["y", "n", "y"];
-
-    var result = arr.filter(function(e, i) {
-        return res[i] == 'y'
-    })
-
-    console.log(result)
-
-
-
-});
-
 
 /**
  * OBTAIN A INTERNAL PROJECT BY NAME
