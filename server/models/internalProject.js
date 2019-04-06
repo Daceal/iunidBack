@@ -60,7 +60,7 @@ let internalProjectSchema = new Schema({
         type: Array,
         default: {}
     },
-    user: {
+    userOwner: {
         type: String,
         required: true
     },
@@ -68,6 +68,10 @@ let internalProjectSchema = new Schema({
         type: String,
         required: true,
         enum: validOrigins
+    },
+    users: {
+        type: Array,
+        default: {}
     }
 });
 

@@ -65,7 +65,7 @@ app.get('/externalProjects', (req, res) => {
 // =======================================
 
 app.post('/createInternalProject', (req, res) => {
-    let email = req.body.email;
+    let email = req.body.userOwner;
     let name = req.body.name;
     let description = req.body.description;
     let tags = req.body.tags;
@@ -75,10 +75,11 @@ app.post('/createInternalProject', (req, res) => {
     let initialDate = req.body.initialDate;
     let deliveryDate = req.body.deliveryDate;
     let counterOffer = req.body.counterOffer;
+    let users = req.body.users;
     let origin = req.body.origin;
 
     let internalProject = new InternalProject({
-        user: email,
+        userOwner: email,
         name: name,
         description: description,
         tags: tags,
@@ -88,7 +89,8 @@ app.post('/createInternalProject', (req, res) => {
         initialDate: initialDate,
         deliveryDate: deliveryDate,
         counteroffer: counterOffer,
-        origin: origin
+        origin: origin,
+        users: users
     });
 
     internalProject.save((err, internalDB) => {
@@ -113,7 +115,7 @@ app.post('/createInternalProject', (req, res) => {
 app.post('/obtainAllProjects', (req, res) => {
     let email = req.body.email;
 
-    InternalProject.find({ user: email }, (err, internalProjects) => {
+    InternalProject.find({ userOwner: email }, (err, internalProjects) => {
         if (err) {
             return res.json({
                 ok: false,
@@ -125,15 +127,41 @@ app.post('/obtainAllProjects', (req, res) => {
             return res.json({
                 ok: false,
                 message: 'This user doesn\'t have a project'
-            })
+            });
         }
 
-        return res.json({
+        res.json({
             ok: true,
             internalProjects
         });
-
     });
+
+});
+
+app.post('/obtainAllProjectsThatHeWorks', (req, res) => {
+    let email = req.body.email;
+
+    InternalProject.find({ users: email }, (err, internalProjects) => {
+        if (err) {
+            return res.json({
+                ok: false,
+                err
+            });
+        }
+
+        if (!internalProjects) {
+            return res.json({
+                ok: false,
+                message: 'This user doesn\'t work in any project'
+            });
+        }
+
+        res.json({
+            ok: true,
+            internalProjects
+        });
+    });
+
 });
 
 /**
