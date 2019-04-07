@@ -64,11 +64,6 @@ let internalProjectSchema = new Schema({
         type: String,
         required: true
     },
-    origin: {
-        type: String,
-        required: true,
-        enum: validOrigins
-    },
     users: {
         type: Array,
         default: {}

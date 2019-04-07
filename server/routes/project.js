@@ -76,7 +76,6 @@ app.post('/createInternalProject', (req, res) => {
     let deliveryDate = req.body.deliveryDate;
     let counterOffer = req.body.counterOffer;
     let users = req.body.users;
-    let origin = req.body.origin;
 
     let internalProject = new InternalProject({
         userOwner: email,
@@ -89,7 +88,6 @@ app.post('/createInternalProject', (req, res) => {
         initialDate: initialDate,
         deliveryDate: deliveryDate,
         counteroffer: counterOffer,
-        origin: origin,
         users: users
     });
 
@@ -194,13 +192,13 @@ app.get('/obtainProjectName', (req, res) => {
 });
 
 /**
- * OBTAIN A INTERNAL PROJECT BY DATE
+ * OBTAIN A INTERNAL PROJECT BY TAGS
  */
 
-app.get('/obtainProjectDate', (req, res) => {
-    let date = req.body.date;
+app.post('/obtainProjectTags', (req, res) => {
+    let tags = req.body.tags;
 
-    InternalProject.find({ date: date }, (err, internalProjects) => {
+    InternalProject.find({ tags: tags }, (err, internalProjects) => {
         if (err) {
             return res.json({
                 ok: false,
@@ -211,7 +209,7 @@ app.get('/obtainProjectDate', (req, res) => {
         if (!internalProjects) {
             return res.json({
                 ok: false,
-                message: 'There is not a project with this date'
+                message: 'There is not a project with this tag'
             })
         }
 
