@@ -2,14 +2,14 @@ const mongoose = require('mongoose');
 //const Usuario = mongoose.model('Usuario');
 const uniqueValidator = require('mongoose-unique-validator');
 
-let estadosProyecto = {
+let projectStates = {
     values: ['Open', 'In progress', 'Close'],
     message: '{VALUE} is not a valid state'
 };
 
-let validOrigins = {
-    values: ['cliente', 'empleador'],
-    message: '{VALUE} is not a valid state'
+let validCategory = {
+    values: ['computer_science', 'physics', 'graphic_design', 'design', 'architecture', 'other'],
+    message: '{VALUE} is not a valid category'
 };
 
 let Schema = mongoose.Schema;
@@ -50,7 +50,7 @@ let internalProjectSchema = new Schema({
     state: {
         type: String,
         default: 'Open',
-        enum: estadosProyecto
+        enum: projectStates
     },
     initialDate: {
         type: Date,
@@ -67,6 +67,11 @@ let internalProjectSchema = new Schema({
     users: {
         type: Array,
         default: {}
+    },
+    category: {
+        type: String,
+        required: true,
+        enum: validCategory
     }
 });
 

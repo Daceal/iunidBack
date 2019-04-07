@@ -221,7 +221,7 @@ app.post('/registerCompany', (req, res) => {
 // =======================================
 
 
-app.post('/obtainContacts', (req, res) => {
+app.post('/obtainContacts', checkToken, (req, res) => {
     let email = req.body.email;
 
     Company.findOne(email, 'contacts', (err, company) => {
@@ -252,7 +252,7 @@ app.post('/obtainContacts', (req, res) => {
 // =======================================
 
 app.post('/getCompany', checkToken, (req, res) => {
-    var email = req.body.email;
+    let email = req.body.email;
 
     Company.findOne({ email: email }, 'name email contactEmail description score img contacts', function(err, company) {
         if (err) {
@@ -277,7 +277,7 @@ app.post('/getCompany', checkToken, (req, res) => {
 });
 
 app.post('/getUser', checkToken, (req, res) => {
-    var email = req.body.email;
+    let email = req.body.email;
 
     User.findOne({ email: email }, 'name email description score skills curses certificates img', function(err, user) {
         if (err) {
