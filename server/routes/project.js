@@ -171,6 +171,7 @@ app.post('/obtainAllProjectsThatHeWorks', checkToken, (req, res) => {
 
 app.post('/obtainProjectName', checkToken, (req, res) => {
     let name = req.body.name;
+    let email = req.body.email;
 
     InternalProject.find({ name: { "$regex": name, "$options": "i" } }, (err, internalProjects) => {
         if (err) {
@@ -195,11 +196,12 @@ app.post('/obtainProjectName', checkToken, (req, res) => {
 });
 
 /**
- * OBTAIN A INTERNAL PROJECT BY TAGS
+ * OBTAIN A INTERNAL PROJECT BY CATEGORY
  */
 
-app.post('/obtainProjectTags', checkToken, (req, res) => {
+app.post('/obtainProjectCategory', checkToken, (req, res) => {
     let category = req.body.category;
+    let email = req.body.email;
 
     InternalProject.find({ category: category }, (err, internalProjects) => {
         if (err) {
@@ -213,6 +215,35 @@ app.post('/obtainProjectTags', checkToken, (req, res) => {
             return res.json({
                 ok: false,
                 message: 'There is not a project with this category'
+            })
+        }
+
+        res.json({
+            ok: true,
+            internalProjects
+        });
+    });
+});
+
+/**
+ * OBTAIN A INTERNAL PROJECT BY TAGS
+ */
+
+app.post('/obtainProjectTags', checkToken, (req, res) => {
+    let tags = req.body.tags;
+
+    InternalProject.find({ tags: tags }, (err, internalProjects) => {
+        if (err) {
+            return res.json({
+                ok: false,
+                err
+            });
+        }
+
+        if (internalProjects.length === 0) {
+            return res.json({
+                ok: false,
+                message: 'There is not a project with this tags'
             })
         }
 
