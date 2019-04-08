@@ -254,4 +254,34 @@ app.post('/obtainProjectTags', checkToken, (req, res) => {
     });
 });
 
+/**
+ * OBTAIN A INTERNAL PROJECT BY PRICE
+ */
+
+app.post('/obtainProjectPrice', (req, res) => {
+    let minPrice = req.body.minPrice;
+    let maxPrice = req.body.maxPrice;
+
+    InternalProject.find({ $and: [{ minPrice: { $gte: minPrice } }], $and: [{ maxPrice: { $lte: maxPrice } }] }, (err, internalProjects) => {
+        if (err) {
+            return res.json({
+                ok: false,
+                err
+            });
+        }
+
+        if (internalProjects.length === 0) {
+            return res.json({
+                ok: false,
+                message: 'There is not a project with this prices'
+            })
+        }
+
+        res.json({
+            ok: true,
+            internalProjects
+        });
+    });
+});
+
 module.exports = app;
