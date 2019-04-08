@@ -42,7 +42,7 @@ let userSchema = new Schema({
         type: Array,
         default: []
     },
-    curses: {
+    courses: {
         type: Array,
         default: {}
     },

@@ -64,7 +64,7 @@ app.post('/externalProjects', checkToken, (req, res) => {
 // CREATE INTERNAL PROJECTS
 // =======================================
 
-app.post('/createInternalProject', checkToken, (req, res) => {
+app.post('/createInternalProject', (req, res) => {
     let email = req.body.email;
     let name = req.body.name;
     let description = req.body.description;
@@ -77,6 +77,7 @@ app.post('/createInternalProject', checkToken, (req, res) => {
     let counterOffer = req.body.counterOffer;
     let users = req.body.users;
     let category = req.body.category;
+    let pendingAccepts = req.body.pendingAccepts;
 
     let internalProject = new InternalProject({
         userOwner: email,
@@ -90,8 +91,8 @@ app.post('/createInternalProject', checkToken, (req, res) => {
         deliveryDate: deliveryDate,
         counteroffer: counterOffer,
         users: users,
-        category: category
-
+        category: category,
+        pendingAccepts: pendingAccepts
     });
 
     internalProject.save((err, internalDB) => {
@@ -282,6 +283,56 @@ app.post('/obtainProjectPrice', (req, res) => {
             internalProjects
         });
     });
+});
+
+/**
+ * Sending a request for join a project
+ */
+
+app.put('/addingPendingRequest', (req, res) => {
+    let id = req.body.id;
+    let email = req.body.email;
+
+    InternalProject.findById(id, (err, response) => {
+        if (err) {
+            return res.json({
+                ok: false,
+                err
+            });
+        }
+
+        InternalProject.find({ pendingAccepts: email })
+            .then(internalProject => res.json(internalProject))
+            .catch(err => res.status(404).json({ success: false }));
+    });
+
+    // InternalProject.find({}, { "pendingAccepts": email }, (err, check) => {
+    //     if (err) {
+    //         return res.json({
+    //             ok: false,
+    //             err
+    //         });
+    //     }
+
+    //     if (!check) {
+    //         console.log("asdfasdfsfdgasdfgafg");
+    //         response.updateOne({ $push: { "pendingAccepts": email } }, { new: true }, (err, internalProject) => {
+    //             if (err) {
+    //                 console.log("Something wrong when updating data!");
+    //             }
+
+    //             res.json({
+    //                 ok: true,
+    //                 internal: internalProject
+    //             });
+    //         });
+    //     }
+
+    //     res.json({
+    //         ok: false,
+    //         internal: check
+    //     });
+    // });
 });
 
 module.exports = app;

@@ -29,7 +29,7 @@ let internalProjectSchema = new Schema({
     },
     files: {
         type: Array,
-        default: {}
+        default: []
     },
     maxPrice: {
         type: Number,
@@ -66,12 +66,15 @@ let internalProjectSchema = new Schema({
     },
     users: {
         type: Array,
-        default: {}
+        default: []
     },
     category: {
         type: String,
         required: true,
         enum: validCategory
+    },
+    pendingAccepts: {
+        type: Array
     }
 });
 
