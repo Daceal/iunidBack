@@ -65,7 +65,7 @@ app.post('/externalProjects', checkToken, (req, res) => {
 // =======================================
 
 app.post('/createInternalProject', checkToken, (req, res) => {
-    let email = req.body.userOwner;
+    let email = req.body.email;
     let name = req.body.name;
     let description = req.body.description;
     let tags = req.body.tags;
@@ -232,7 +232,7 @@ app.post('/obtainProjectCategory', checkToken, (req, res) => {
 app.post('/obtainProjectTags', checkToken, (req, res) => {
     let tags = req.body.tags;
 
-    InternalProject.find({ tags: tags }, (err, internalProjects) => {
+    InternalProject.find({ tags: { $all: tags } }, (err, internalProjects) => {
         if (err) {
             return res.json({
                 ok: false,
