@@ -271,9 +271,26 @@ app.post('/getCompany', checkToken, (req, res) => {
             });
         }
 
-        return res.json({
-            ok: true,
-            company
+        ExternalProject.find({ userOwner: email }, (err, projects) => {
+            if (err) {
+                return res.status(400).json({
+                    ok: false,
+                    err
+                });
+            }
+
+            if (!project) {
+                return res.status(403).json({
+                    ok: false,
+                    err: 'The email is invalid'
+                });
+            }
+
+            return res.json({
+                ok: true,
+                company,
+                projects
+            });
         });
     });
 });
@@ -296,7 +313,7 @@ app.post('/getUser', (req, res) => {
             });
         }
 
-        ExternalProject.find({ userOwner: email }, (err, project) => {
+        ExternalProject.find({ userOwner: email }, (err, projects) => {
             if (err) {
                 return res.status(400).json({
                     ok: false,
@@ -314,7 +331,7 @@ app.post('/getUser', (req, res) => {
             return res.json({
                 ok: true,
                 user,
-                project
+                projects
             });
         });
     });
