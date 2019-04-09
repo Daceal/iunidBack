@@ -278,7 +278,7 @@ app.post('/obtainProjectPrice', (req, res) => {
             })
         }
 
-        res.json({
+        return res.json({
             ok: true,
             internalProjects
         });
@@ -293,7 +293,7 @@ app.put('/addingPendingRequest', (req, res) => {
     let id = req.body.id;
     let email = req.body.email;
 
-    InternalProject.findById(id, (err, response) => {
+    InternalProject.findById(id, (err, check) => {
         if (err) {
             return res.json({
                 ok: false,
@@ -301,38 +301,42 @@ app.put('/addingPendingRequest', (req, res) => {
             });
         }
 
-        InternalProject.find({ pendingAccepts: email })
-            .then(internalProject => res.json(internalProject))
-            .catch(err => res.status(404).json({ success: false }));
+        for (let i = 0; i < check.users.length; i++) {
+            if (check.users[i] === email) {
+                return res.json({
+                    ok: false,
+                    err: {
+                        message: 'The user is already in the project'
+                    }
+                });
+            }
+        }
+
+        for (let j = 0; j < check.pendingAccepts.length; j++) {
+            if (check.pendingAccepts[j] === email) {
+                return res.json({
+                    ok: false,
+                    err: {
+                        message: 'The user is pending to accept'
+                    }
+                });
+            }
+        }
+
+        InternalProject.findByIdAndUpdate(id, { $push: { "pendingAccepts": email } }, (err, response) => {
+            if (err) {
+                return res.json({
+                    ok: false,
+                    err
+                });
+            }
+
+            return res.json({
+                ok: true,
+                message: response
+            });
+        });
     });
-
-    // InternalProject.find({}, { "pendingAccepts": email }, (err, check) => {
-    //     if (err) {
-    //         return res.json({
-    //             ok: false,
-    //             err
-    //         });
-    //     }
-
-    //     if (!check) {
-    //         console.log("asdfasdfsfdgasdfgafg");
-    //         response.updateOne({ $push: { "pendingAccepts": email } }, { new: true }, (err, internalProject) => {
-    //             if (err) {
-    //                 console.log("Something wrong when updating data!");
-    //             }
-
-    //             res.json({
-    //                 ok: true,
-    //                 internal: internalProject
-    //             });
-    //         });
-    //     }
-
-    //     res.json({
-    //         ok: false,
-    //         internal: check
-    //     });
-    // });
 });
 
 module.exports = app;

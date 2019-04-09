@@ -269,7 +269,7 @@ app.post('/getCompany', checkToken, (req, res) => {
             });
         }
 
-        res.json({
+        return res.json({
             ok: true,
             company
         });
@@ -294,7 +294,7 @@ app.post('/getUser', checkToken, (req, res) => {
             });
         }
 
-        res.json({
+        return res.json({
             ok: true,
             user
         });

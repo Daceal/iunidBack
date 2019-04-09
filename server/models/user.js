@@ -58,14 +58,6 @@ let userSchema = new Schema({
         type: Boolean,
         default: false
     },
-    linkedin: {
-        type: Boolean,
-        default: false
-    },
-    facebook: {
-        type: Boolean,
-        default: false
-    },
     userType: {
         type: String,
         default: 'USER_ROLE',
