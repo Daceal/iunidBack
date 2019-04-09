@@ -281,7 +281,7 @@ app.post('/getCompany', checkToken, (req, res) => {
 app.post('/getUser', (req, res) => {
     let email = req.body.email;
 
-    User.findOne({ email: email }, 'name email description score skills curses certificates img', function(err, user) {
+    User.findOne({ email: email }, 'name email description score skills courses certificates img', function(err, user) {
         if (err) {
             return res.status(400).json({
                 ok: false,

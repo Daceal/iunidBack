@@ -16,7 +16,7 @@ app.post('/createExternalProject', checkToken, (req, res) => {
     let url = req.body.url;
 
     let externalProject = new ExternalProject({
-        user: email,
+        userOwner: email,
         name: name,
         description: description,
         url: url
