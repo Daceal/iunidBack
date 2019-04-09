@@ -279,7 +279,7 @@ app.post('/getCompany', checkToken, (req, res) => {
                 });
             }
 
-            if (!project) {
+            if (!projects) {
                 return res.status(403).json({
                     ok: false,
                     err: 'The email is invalid'
@@ -321,7 +321,7 @@ app.post('/getUser', (req, res) => {
                 });
             }
 
-            if (!project) {
+            if (!projects) {
                 return res.status(403).json({
                     ok: false,
                     err: 'The email is invalid'
