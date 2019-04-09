@@ -16,7 +16,7 @@ let externalProjectSchema = new Schema({
     url: {
         type: String
     },
-    user: {
+    userOwner: {
         type: String
     }
 });

@@ -4,9 +4,11 @@ const jwt = require('jsonwebtoken');
 const _ = require('underscore');
 const User = require('../models/user');
 const Company = require('../models/company');
+const ExternalProject = require('../models/externalProject');
 const path = require('path');
 const { checkToken, checkAdmin_Role } = require('../middlewares/authentication');
 const app = express();
+
 
 
 
@@ -276,7 +278,7 @@ app.post('/getCompany', checkToken, (req, res) => {
     });
 });
 
-app.post('/getUser', checkToken, (req, res) => {
+app.post('/getUser', (req, res) => {
     let email = req.body.email;
 
     User.findOne({ email: email }, 'name email description score skills curses certificates img', function(err, user) {
@@ -294,9 +296,26 @@ app.post('/getUser', checkToken, (req, res) => {
             });
         }
 
-        return res.json({
-            ok: true,
-            user
+        ExternalProject.find({ userOwner: email }, (err, project) => {
+            if (err) {
+                return res.status(400).json({
+                    ok: false,
+                    err
+                });
+            }
+
+            if (!project) {
+                return res.status(403).json({
+                    ok: false,
+                    err: 'The email is invalid'
+                });
+            }
+
+            return res.json({
+                ok: true,
+                user,
+                project
+            });
         });
     });
 });
