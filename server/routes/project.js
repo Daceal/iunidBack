@@ -111,7 +111,7 @@ app.post('/createInternalProject', checkToken, (req, res) => {
 });
 
 /**
- * OBTAIN ALL INTERNAL PROJECTS, EXTERNAL PROJECTS, PROJECTS WHO IS WORKING AT
+ * OBTAIN ALL INTERNAL PROJECTS
  */
 
 app.post('/obtainAllProjects', checkToken, (req, res) => {
@@ -132,7 +132,37 @@ app.post('/obtainAllProjects', checkToken, (req, res) => {
             });
         }
 
-        res.json({
+        return res.json({
+            ok: true,
+            internalProjects
+        });
+    });
+
+});
+
+/**
+ * OBTAIN NAME AND ID OF AN INTERNAL PROJECT BY EMAIL OWNER
+ */
+
+app.post('/obtainProjectNameAndId', checkToken, (req, res) => {
+    let email = req.body.email;
+
+    InternalProject.find({ userOwner: email }, 'id name', (err, internalProjects) => {
+        if (err) {
+            return res.json({
+                ok: false,
+                err
+            });
+        }
+
+        if (!internalProjects) {
+            return res.json({
+                ok: false,
+                message: 'This user doesn\'t have a project'
+            });
+        }
+
+        return res.json({
             ok: true,
             internalProjects
         });
@@ -305,7 +335,7 @@ app.put('/addingPendingRequest', checkToken, (req, res) => {
             return res.json({
                 ok: false,
                 err: {
-                    message: 'You are the owner of the project fool'
+                    message: 'Really???'
                 }
             });
         }
