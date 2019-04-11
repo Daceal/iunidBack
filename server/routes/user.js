@@ -39,12 +39,16 @@ app.post('/login', (req, res) => {
             }
 
             let token = jwt.sign({
-                user: userDB
+                user: {
+                    id: userDB._id,
+                    email: userDB.email,
+                    password: userDB.password
+                }
             }, process.env.SEED, { expiresIn: process.env.tokenExpiration });
 
-            res.json({
+            return res.json({
                 ok: true,
-                userDB,
+                user: userDB,
                 token
             });
 
@@ -76,12 +80,16 @@ app.post('/login', (req, res) => {
                 }
 
                 let token = jwt.sign({
-                    company: companyDB
+                    company: {
+                        id: companyDB._id,
+                        email: companyDB.email,
+                        password: companyDB.password
+                    }
                 }, process.env.SEED, { expiresIn: process.env.tokenExpiration });
 
-                res.json({
+                return res.json({
                     ok: true,
-                    companyDB,
+                    company: companyDB,
                     token
                 });
             });
