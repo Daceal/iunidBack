@@ -295,7 +295,7 @@ app.post('/getCompany', checkToken, (req, res) => {
     });
 });
 
-app.post('/getUser', (req, res) => {
+app.post('/getUser', checkToken, (req, res) => {
     let email = req.body.email;
 
     User.findOne({ email: email }, 'name email description score skills courses certificates img', function(err, user) {

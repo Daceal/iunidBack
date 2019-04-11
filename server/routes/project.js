@@ -64,7 +64,7 @@ app.post('/externalProjects', checkToken, (req, res) => {
 // CREATE INTERNAL PROJECTS
 // =======================================
 
-app.post('/createInternalProject', (req, res) => {
+app.post('/createInternalProject', checkToken, (req, res) => {
     let email = req.body.email;
     let name = req.body.name;
     let description = req.body.description;
@@ -259,7 +259,7 @@ app.post('/obtainProjectTags', checkToken, (req, res) => {
  * OBTAIN A INTERNAL PROJECT BY PRICE
  */
 
-app.post('/obtainProjectPrice', (req, res) => {
+app.post('/obtainProjectPrice', checkToken, (req, res) => {
     let minPrice = req.body.minPrice;
     let maxPrice = req.body.maxPrice;
 
@@ -289,7 +289,7 @@ app.post('/obtainProjectPrice', (req, res) => {
  * Sending a request for join a project
  */
 
-app.put('/addingPendingRequest', (req, res) => {
+app.put('/addingPendingRequest', checkToken, (req, res) => {
     let id = req.body.id;
     let email = req.body.email;
 
