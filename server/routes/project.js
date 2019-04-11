@@ -170,6 +170,11 @@ app.post('/obtainProjectNameAndId', checkToken, (req, res) => {
 
 });
 
+
+/**
+ * OBTAIN ALL INTERNAL PROJECT THAT THE USER WORKS
+ */
+
 app.post('/obtainAllProjectsThatHeWorks', checkToken, (req, res) => {
     let email = req.body.email;
 
@@ -316,7 +321,7 @@ app.post('/obtainProjectPrice', checkToken, (req, res) => {
 });
 
 /**
- * Sending a request for join a project
+ * SENDING A REQUEST FOR JOIN A PROJECT
  */
 
 app.put('/addingPendingRequest', checkToken, (req, res) => {

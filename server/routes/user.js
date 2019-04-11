@@ -21,16 +21,25 @@ app.post('/login', (req, res) => {
 
     User.findOne({ email: body.email }, (err, userDB) => {
 
-        if (err) {
-            return res.status(500).json({
-                ok: false,
-                err
-            });
-        }
-
         if (userDB) {
+            if (err) {
+                return res.json({
+                    ok: false,
+                    err
+                });
+            }
+
+            if (!userDB.state) {
+                return res.json({
+                    ok: false,
+                    err: {
+                        message: 'This account dont exists or is inactive'
+                    }
+                });
+            }
+
             if (!bcrypt.compareSync(body.password, userDB.password)) {
-                return res.status(400).json({
+                return res.json({
                     ok: false,
                     err: {
                         message: 'User or password incorrect'
@@ -53,16 +62,26 @@ app.post('/login', (req, res) => {
             });
 
         } else {
+
             Company.findOne({ email: body.email }, (err, companyDB) => {
                 if (err) {
-                    return res.status(500).json({
+                    return res.json({
                         ok: false,
                         err
                     });
                 }
 
+                if (!companyDB.state) {
+                    return res.json({
+                        ok: false,
+                        err: {
+                            message: 'This account dont exists or is inactive'
+                        }
+                    });
+                }
+
                 if (!companyDB) {
-                    return res.status(400).json({
+                    return res.json({
                         ok: false,
                         err: {
                             message: 'User or password incorrect'
@@ -71,7 +90,7 @@ app.post('/login', (req, res) => {
                 }
 
                 if (!bcrypt.compareSync(body.password, companyDB.password)) {
-                    return res.status(400).json({
+                    return res.json({
                         ok: false,
                         err: {
                             message: 'User or password incorrect'
