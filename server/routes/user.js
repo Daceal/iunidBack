@@ -48,7 +48,7 @@ app.post('/login', (req, res) => {
 
             return res.json({
                 ok: true,
-                user: userDB,
+                userDB,
                 token
             });
 
@@ -89,7 +89,7 @@ app.post('/login', (req, res) => {
 
                 return res.json({
                     ok: true,
-                    company: companyDB,
+                    companyDB,
                     token
                 });
             });

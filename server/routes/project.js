@@ -301,6 +301,15 @@ app.put('/addingPendingRequest', checkToken, (req, res) => {
             });
         }
 
+        if (check.userOwner === email) {
+            return res.json({
+                ok: false,
+                err: {
+                    message: 'You are the owner of the project fool'
+                }
+            });
+        }
+
         for (let i = 0; i < check.users.length; i++) {
             if (check.users[i] === email) {
                 return res.json({
