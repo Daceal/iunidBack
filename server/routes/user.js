@@ -507,7 +507,7 @@ app.put('/editUser', checkToken, (req, res) => {
 app.put('/editCompany', checkToken, (req, res) => {
 
     let id = req.body.id;
-    let body = _.pick(req.body, ['name', 'email', 'img', 'description', 'cif']);
+    let body = _.pick(req.body, ['name', 'email', 'img', 'description']);
 
     Company.findOne({ email: req.body.email }, (err, check) => {
         if (err) {
@@ -557,6 +557,48 @@ app.put('/editCompany', checkToken, (req, res) => {
         }
     });
 
+});
+
+app.put('/editPassword', (req, res) => {
+    let email = req.body.email;
+    let password = req.body.password;
+
+    User.findOne(email, (err, check) => {
+        if (err) {
+            return res.json({
+                ok: false,
+                err
+            });
+        }
+
+        if (check) {
+            User.findOneAndUpdate(email, { password: bcrypt.hashSync(password, 10) }, (err, passwordChanged) => {
+                if (err) {
+                    return res.json({
+                        ok: false,
+                        err
+                    });
+                }
+                return res.json({
+                    ok: true,
+                    user: passwordChanged
+                });
+            });
+        } else {
+            Company.findOneAndUpdate(email, { password: bcrypt.hashSync(password, 10) }, (err, passwordChanged) => {
+                if (err) {
+                    return res.json({
+                        ok: false,
+                        err
+                    });
+                }
+                return res.json({
+                    ok: true,
+                    company: passwordChanged
+                });
+            });
+        }
+    });
 });
 
 app.delete('/deleteAccount', (req, res) => {
