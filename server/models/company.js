@@ -15,13 +15,10 @@ let companySchema = new Schema({
     },
     email: {
         type: String,
-        unique: true,
         required: [true, 'Email must be neccesary']
     },
     contactEmail: {
-        type: String,
-        unique: true,
-        required: [true, 'EmailContact must be neccesary']
+        type: String
     },
     state: {
         type: Boolean,
@@ -58,7 +55,8 @@ let companySchema = new Schema({
     },
     cif: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     contacts: {
         type: Array,

@@ -5,9 +5,17 @@ const { checkToken, checkAdmin_Role } = require('../middlewares/authentication')
 const app = express();
 
 
-// =======================================
-// CREATE EXTERNAL PROJECTS
-// =======================================
+/**
+ * Method name:
+ *      createExternalProject
+ * 
+ * Received parameters:
+ *      email, name, description, url
+ * 
+ * The method set the parameters in a externalProject object and save them
+ * in the ExternalProject table.
+ * 
+ */
 
 app.post('/createExternalProject', checkToken, (req, res) => {
     let email = req.body.email;
@@ -24,22 +32,29 @@ app.post('/createExternalProject', checkToken, (req, res) => {
 
     externalProject.save((err, externalDB) => {
         if (err) {
-            return res.status(400).json({
+            return res.json({
                 ok: false,
                 err
             });
         }
 
-        res.json({
+        return res.json({
             ok: true,
             externalProject: externalDB
         });
     });
 });
 
-// =======================================
-// OBTAIN AL EXTERNAL PROJECTS  BY ID
-// =======================================
+/**
+ * Method name:
+ *      externalProjects
+ * 
+ * Received parameters:
+ *      email, name, description, url
+ * 
+ * The method find and obtain all the external projects by the email received
+ * 
+ */
 
 app.post('/externalProjects', checkToken, (req, res) => {
     let email = req.body.email;
@@ -47,22 +62,31 @@ app.post('/externalProjects', checkToken, (req, res) => {
         .populate()
         .exec((err, externalProject) => {
             if (err) {
-                return res.status(400).json({
+                return res.json({
                     ok: false,
                     err
                 });
             }
 
-            res.json({
+            return res.json({
                 ok: true,
                 externalProject
             });
         })
 });
 
-// =======================================
-// CREATE INTERNAL PROJECTS
-// =======================================
+/**
+ * Method name:
+ *      createInternalProject
+ * 
+ * Received parameters:
+ *      email, name, description, tags, files, minPrice, maxPrice, initialDate, deliveryDate, 
+ *      counterOffer, users, category, pendingAcepts
+ * 
+ * The method set the parameters in a internalProject object and save them
+ * in the InternalProject table.
+ * 
+ */
 
 app.post('/createInternalProject', checkToken, (req, res) => {
     let email = req.body.email;
@@ -97,13 +121,13 @@ app.post('/createInternalProject', checkToken, (req, res) => {
 
     internalProject.save((err, internalDB) => {
         if (err) {
-            return res.status(400).json({
+            return res.json({
                 ok: false,
                 err
             });
         }
 
-        res.json({
+        return res.json({
             ok: true,
             internalProject: internalDB
         });
@@ -111,7 +135,15 @@ app.post('/createInternalProject', checkToken, (req, res) => {
 });
 
 /**
- * OBTAIN ALL INTERNAL PROJECTS
+ * Method name:
+ *      obtainAllProjects
+ * 
+ * Received parameters:
+ *      email
+ * 
+ * The method find the email in the internal project table and obtain all the projects
+ * where the userOwner is the same email.
+ * 
  */
 
 app.post('/obtainAllProjects', checkToken, (req, res) => {
@@ -128,7 +160,7 @@ app.post('/obtainAllProjects', checkToken, (req, res) => {
         if (!internalProjects) {
             return res.json({
                 ok: false,
-                message: 'This user doesn\'t have a project'
+                message: 'This user doesn´t have a project'
             });
         }
 
@@ -141,7 +173,18 @@ app.post('/obtainAllProjects', checkToken, (req, res) => {
 });
 
 /**
- * OBTAIN NAME AND ID OF AN INTERNAL PROJECT BY EMAIL OWNER
+ * Method name:
+ *      obtainProjectNameAndId
+ * 
+ * Received parameters:
+ *      email
+ * 
+ * Returned parameters:
+ *      id and name
+ * 
+ * Find the user owner of the internal project and return the id and name of the project
+ * using the email
+ * 
  */
 
 app.post('/obtainProjectNameAndId', checkToken, (req, res) => {
@@ -158,7 +201,7 @@ app.post('/obtainProjectNameAndId', checkToken, (req, res) => {
         if (!internalProjects) {
             return res.json({
                 ok: false,
-                message: 'This user doesn\'t have a project'
+                message: 'This user doesn´t have a project'
             });
         }
 
@@ -172,7 +215,15 @@ app.post('/obtainProjectNameAndId', checkToken, (req, res) => {
 
 
 /**
- * OBTAIN ALL INTERNAL PROJECT THAT THE USER WORKS
+ * Method name:
+ *      obtainAllProjectsThatHeWorks
+ * 
+ * Received parameters:
+ *      email
+ * 
+ * The method find and return all the projects that the user is working
+ * in this moment using the email
+ * 
  */
 
 app.post('/obtainAllProjectsThatHeWorks', checkToken, (req, res) => {
@@ -193,7 +244,7 @@ app.post('/obtainAllProjectsThatHeWorks', checkToken, (req, res) => {
             });
         }
 
-        res.json({
+        return res.json({
             ok: true,
             internalProjects
         });
@@ -202,12 +253,18 @@ app.post('/obtainAllProjectsThatHeWorks', checkToken, (req, res) => {
 });
 
 /**
- * OBTAIN A INTERNAL PROJECT BY NAME
+ * Method name:
+ *      obtainProjectName
+ * 
+ * Received parameters:
+ *      name
+ * 
+ * The method find and return all the projects with the name received
+ * 
  */
 
 app.post('/obtainProjectName', checkToken, (req, res) => {
     let name = req.body.name;
-    let email = req.body.email;
 
     InternalProject.find({ name: { "$regex": name, "$options": "i" } }, (err, internalProjects) => {
         if (err) {
@@ -224,7 +281,7 @@ app.post('/obtainProjectName', checkToken, (req, res) => {
             })
         }
 
-        res.json({
+        return res.json({
             ok: true,
             internalProjects
         });
@@ -232,12 +289,18 @@ app.post('/obtainProjectName', checkToken, (req, res) => {
 });
 
 /**
- * OBTAIN A INTERNAL PROJECT BY CATEGORY
+ * Method name:
+ *      obtainProjectCategory
+ * 
+ * Received parameters:
+ *      category
+ * 
+ * The method find and return all the projects with the category received
+ * 
  */
 
 app.post('/obtainProjectCategory', checkToken, (req, res) => {
     let category = req.body.category;
-    let email = req.body.email;
 
     InternalProject.find({ category: category }, (err, internalProjects) => {
         if (err) {
@@ -254,7 +317,7 @@ app.post('/obtainProjectCategory', checkToken, (req, res) => {
             })
         }
 
-        res.json({
+        return res.json({
             ok: true,
             internalProjects
         });
@@ -262,7 +325,14 @@ app.post('/obtainProjectCategory', checkToken, (req, res) => {
 });
 
 /**
- * OBTAIN A INTERNAL PROJECT BY TAGS
+ * Method name:
+ *      obtainProjectTags
+ * 
+ * Received parameters:
+ *      tags
+ * 
+ * The method find and return all the projects with the tags received
+ * 
  */
 
 app.post('/obtainProjectTags', checkToken, (req, res) => {
@@ -283,7 +353,7 @@ app.post('/obtainProjectTags', checkToken, (req, res) => {
             })
         }
 
-        res.json({
+        return res.json({
             ok: true,
             internalProjects
         });
@@ -291,7 +361,14 @@ app.post('/obtainProjectTags', checkToken, (req, res) => {
 });
 
 /**
- * OBTAIN A INTERNAL PROJECT BY PRICE
+ * Method name:
+ *      obtainProjectPrice
+ * 
+ * Received parameters:
+ *      minPrice, maxPrice
+ * 
+ * The method find and return all the projects between the min price and max price received
+ * 
  */
 
 app.post('/obtainProjectPrice', checkToken, (req, res) => {
@@ -321,7 +398,24 @@ app.post('/obtainProjectPrice', checkToken, (req, res) => {
 });
 
 /**
- * SENDING A REQUEST FOR JOIN A PROJECT
+ * Method name:
+ *      addingPendingRequest
+ * 
+ * Received parameters:
+ *      id, email
+ * 
+ * The method find the email in the userOwner row, if it´s true thats mean the user is
+ * the owner of the project so the request is not sent. 
+ * 
+ * Then find it in the users row, if it´s true that means the user is working on the 
+ * project so the request is not sent.
+ * 
+ * After that compare if the user is in the pendingAccepts row, if it´s true that means
+ * the user is already pending to accept.
+ * 
+ * Finally, if all the previous checks are false, the pending accept is send and the user
+ * is introduce in the pendingAccepts row.
+ * 
  */
 
 app.put('/addingPendingRequest', checkToken, (req, res) => {
@@ -340,7 +434,7 @@ app.put('/addingPendingRequest', checkToken, (req, res) => {
             return res.json({
                 ok: false,
                 err: {
-                    message: 'Really???'
+                    message: 'You can´t send a request if you are the owner of the project'
                 }
             });
         }
@@ -379,6 +473,80 @@ app.put('/addingPendingRequest', checkToken, (req, res) => {
                 ok: true,
                 message: response
             });
+        });
+    });
+});
+
+app.put('/editInternalProject', checkToken, (req, res) => {
+    let idProject = req.body.id;
+    let body = req.body;
+
+    InternalProject.findByIdAndUpdate(idProject, body, (err, internalProjectEdited) => {
+        if (err) {
+            return res.json({
+                ok: false,
+                err
+            });
+        }
+
+        return res.json({
+            ok: true,
+            project: internalProjectEdited
+        });
+    });
+});
+
+app.put('/editExternalProject', checkToken, (req, res) => {
+    let idProject = req.body.id;
+    let body = req.body;
+
+    ExternalProject.findByIdAndUpdate(idProject, body, (err, externalProjectEdited) => {
+        if (err) {
+            return res.json({
+                ok: false,
+                err
+            });
+        }
+
+        return res.json({
+            ok: true,
+            project: externalProjectEdited
+        });
+    });
+});
+
+app.delete('/deleteInternalProject', checkToken, (req, res) => {
+    let idProject = req.body.id;
+
+    InternalProject.findByIdAndDelete(idProject, (err, deletedProject) => {
+        if (err) {
+            return res.json({
+                ok: false,
+                err
+            });
+        }
+
+        return res.json({
+            ok: true,
+            project: deletedProject
+        });
+    });
+});
+
+app.delete('/deleteExternalProject', checkToken, (req, res) => {
+    let idProject = req.body.id;
+
+    ExternalProject.findByIdAndDelete(idProject, (err, deletedProject) => {
+        if (err) {
+            return res.json({
+                ok: false,
+                err
+            });
+        }
+
+        return res.json({
+            ok: true,
+            project: deletedProject
         });
     });
 });

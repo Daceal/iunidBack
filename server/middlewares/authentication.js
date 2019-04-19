@@ -1,8 +1,22 @@
 const jwt = require('jsonwebtoken');
 
-// =====================================
-// Check Token
-// =====================================
+/**
+ * Method name:
+ *      checkToken
+ * 
+ * Received parameters:
+ *      token, email
+ * 
+ * The method verify the token received and the seed we are working.
+ * 
+ * If the user email is not the same that the email passed that means
+ * the email is not a user email and do the same with a company.
+ * 
+ * We do this because someone can change the localstorage and introduce
+ * a false email that could be a company email or user email when he/she is
+ * a user instead of a company and vice-versa.
+ * 
+ */
 
 let checkToken = (req, res, next) => {
 
@@ -12,9 +26,8 @@ let checkToken = (req, res, next) => {
     jwt.verify(token, process.env.SEED, (err, decoded) => {
 
         if (decoded.user) {
-            console.log(decoded.user.email);
             if (decoded.user.email !== email) {
-                return res.status(401).json({
+                return res.json({
                     ok: false,
                     err: {
                         message: 'The email provided is not a user email'
@@ -22,9 +35,8 @@ let checkToken = (req, res, next) => {
                 });
             }
         } else {
-            console.log(decoded.company.email);
             if (decoded.company.email !== email) {
-                return res.status(401).json({
+                return res.json({
                     ok: false,
                     err: {
                         message: 'The email provided is not a company email'
@@ -34,7 +46,7 @@ let checkToken = (req, res, next) => {
         }
 
         if (err) {
-            return res.status(401).json({
+            return res.json({
                 ok: false,
                 err: {
                     message: 'Invalid Token'
@@ -49,9 +61,18 @@ let checkToken = (req, res, next) => {
 
 };
 
-// =====================================
-// Check ADMIN_ROLE
-// =====================================
+/**
+ * Method name:
+ *      checkAdmin_Role
+ * 
+ * Received parameters:
+ *      user
+ * 
+ * The method take the current user and compare the role he has
+ * with the admin role, if he is not an admin he can´t do the action of the method
+ * that this one is included.
+ * 
+ */
 
 let checkAdmin_Role = (req, res, next) => {
 

@@ -4,17 +4,32 @@ const jwt = require('jsonwebtoken');
 const _ = require('underscore');
 const User = require('../models/user');
 const Company = require('../models/company');
+const InternalProject = require('../models/internalProject');
 const ExternalProject = require('../models/externalProject');
 const path = require('path');
-const { checkToken, checkAdmin_Role } = require('../middlewares/authentication');
+const { checkToken } = require('../middlewares/authentication');
 const app = express();
 
 
-
-
-// =======================================
-// USERS LOGIN
-// =======================================
+/**
+ * Method name: 
+ *      Login
+ * 
+ * Received parameters: 
+ *      email and password.
+ * 
+ * This method log an user or a company as follows:
+ * 
+ * The method compare if the email received is on the user or company table.
+ * 
+ * Then compare the state of the account, if it´s false automatically stops the method and return a false
+ * because that´s mean the account is inactive.
+ * 
+ * After that it is compared the received password is the same that the user in the table
+ * 
+ * Finally the method create a token for that user session.
+ * 
+ */
 
 app.post('/login', (req, res) => {
     let body = req.body;
@@ -113,15 +128,25 @@ app.post('/login', (req, res) => {
                 });
             });
         }
-
     });
 });
 
 
-// =======================================
-// USERS REGISTERS
-// =======================================
-
+/**
+ * Method name:
+ *      registerUser
+ * 
+ * Received parameters:
+ *      email, password, name, img, description, skills, courses and certificates
+ * 
+ * The method find the email received and search for coincidences in the user and company tables
+ * because the email must be unique in the web site.
+ * 
+ * If there is not an email the method set the other parameters and encrypt the password.
+ * 
+ * Finally the user is saved in the database.
+ * 
+ */
 
 app.post('/registerUser', (req, res) => {
 
@@ -129,45 +154,54 @@ app.post('/registerUser', (req, res) => {
 
     User.findOne({ email: body.email }, (err, userDB) => {
         if (err) {
-            return res.status(500).json({
+            return res.json({
                 ok: false,
                 err
             });
         }
 
         if (userDB) {
-            return res.status(404).json({
+            return res.json({
                 ok: false,
                 err: 'The email is already registered'
             });
         } else {
             Company.findOne({ email: body.email }, (err, check) => {
+
+                if (err) {
+                    return res.json({
+                        ok: false,
+                        err
+                    });
+                }
+
                 if (!check) {
                     let user = new User({
                         email: body.email,
+                        password: bcrypt.hashSync(body.password, 10),
                         name: body.name,
+                        img: body.img,
+                        description: body.description,
                         skills: body.skills,
                         courses: body.courses,
-                        description: body.description,
-                        certificates: body.certificates,
-                        password: bcrypt.hashSync(body.password, 10)
+                        certificates: body.certificates
                     });
 
                     user.save((err, userDB) => {
                         if (err) {
-                            return res.status(400).json({
+                            return res.json({
                                 ok: false,
                                 err
                             });
                         }
 
-                        res.json({
+                        return res.json({
                             ok: true,
                             user: userDB
                         });
                     });
                 } else {
-                    res.json({
+                    return res.json({
                         ok: false,
                         err: 'The email must be unique'
                     });
@@ -177,34 +211,50 @@ app.post('/registerUser', (req, res) => {
     });
 });
 
+/**
+ * Method name:
+ *      registerCompany
+ * 
+ * Received parameters:
+ *      email, name, cif, description, img, contactEmail and password
+ *      
+ * The method find the email received and search for coincidences in the user and company tables
+ * because the email must be unique in the web site.
+ * 
+ * If there is not an email the method set the other parameters and encrypt the password.
+ * 
+ * Finally the company is saved in the database.
+ * 
+ */
+
 app.post('/registerCompany', (req, res) => {
 
     let body = req.body;
 
     Company.findOne({ email: body.email }, (err, companyDB) => {
         if (err) {
-            return res.status(500).json({
+            return res.json({
                 ok: false,
                 err
             });
         }
 
         if (!body.cif) {
-            return res.status(404).json({
+            return res.json({
                 ok: false,
                 err: 'The cif is empty'
             });
         }
 
         if (!body.contactEmail) {
-            return res.status(404).json({
+            return res.json({
                 ok: false,
                 err: 'The contact email is empty'
             });
         }
 
         if (companyDB) {
-            return res.status(404).json({
+            return res.json({
                 ok: false,
                 err: 'The email is already registered'
             });
@@ -223,19 +273,19 @@ app.post('/registerCompany', (req, res) => {
 
                     company.save((err, companyDB) => {
                         if (err) {
-                            return res.status(400).json({
+                            return res.json({
                                 ok: false,
                                 err
                             });
                         }
 
-                        res.json({
+                        return res.json({
                             ok: true,
                             company: companyDB
                         });
                     });
                 } else {
-                    res.json({
+                    return res.json({
                         ok: false,
                         err: 'The email must be unique'
                     });
@@ -245,26 +295,35 @@ app.post('/registerCompany', (req, res) => {
     });
 });
 
-// =======================================
-// COMPANY METHODS
-// =======================================
-
+/**
+ * Method name:
+ *      obtainContacts
+ * 
+ * Received parameters:
+ *      email
+ * 
+ * Returned parameters:
+ *      contacts
+ * 
+ * Search all the contacts of a company by the email.
+ * 
+ */
 
 app.post('/obtainContacts', checkToken, (req, res) => {
     let email = req.body.email;
 
     Company.findOne(email, 'contacts', (err, company) => {
         if (err) {
-            return res.status(500).json({
+            return res.json({
                 ok: false,
                 err
             });
         }
 
         if (!company) {
-            return res.status(500).json({
+            return res.json({
                 ok: false,
-                err: 'The company dont exists'
+                err: 'The company don´t exists'
             });
         }
 
@@ -276,16 +335,26 @@ app.post('/obtainContacts', checkToken, (req, res) => {
 });
 
 
-// =======================================
-// USERS METHODS
-// =======================================
+/**
+ * Method name:
+ *      getCompany
+ * 
+ * Received parameters:
+ *      email
+ * 
+ * Returned parameters:
+ *      name, email, contactEmail, description, score, img, contacts and external projects
+ * 
+ * Search the company by email and returned the elements necessaries for the profile.
+ * 
+ */
 
 app.post('/getCompany', checkToken, (req, res) => {
     let email = req.body.email;
 
     Company.findOne({ email: email }, 'name email contactEmail description score img contacts', function(err, company) {
         if (err) {
-            return res.status(400).json({
+            return res.json({
                 ok: false,
                 err
             });
@@ -300,14 +369,14 @@ app.post('/getCompany', checkToken, (req, res) => {
 
         ExternalProject.find({ userOwner: email }, (err, projects) => {
             if (err) {
-                return res.status(400).json({
+                return res.json({
                     ok: false,
                     err
                 });
             }
 
             if (!projects) {
-                return res.status(403).json({
+                return res.json({
                     ok: false,
                     err: 'The email is invalid'
                 });
@@ -322,19 +391,33 @@ app.post('/getCompany', checkToken, (req, res) => {
     });
 });
 
+/**
+ * Method name:
+ *      getUser
+ * 
+ * Received parameters:
+ *      email
+ * 
+ * Returned parameters:
+ *      name, email, description, score, skills, courses, certificates, img and external projects
+ * 
+ * Search the user by email and returned the elements necessaries for the profile.
+ * 
+ */
+
 app.post('/getUser', checkToken, (req, res) => {
     let email = req.body.email;
 
     User.findOne({ email: email }, 'name email description score skills courses certificates img', function(err, user) {
         if (err) {
-            return res.status(400).json({
+            return res.json({
                 ok: false,
                 err
             });
         }
 
         if (!user) {
-            return res.status(403).json({
+            return res.json({
                 ok: false,
                 err: 'The email is invalid'
             });
@@ -342,14 +425,14 @@ app.post('/getUser', checkToken, (req, res) => {
 
         ExternalProject.find({ userOwner: email }, (err, projects) => {
             if (err) {
-                return res.status(400).json({
+                return res.json({
                     ok: false,
                     err
                 });
             }
 
             if (!projects) {
-                return res.status(403).json({
+                return res.json({
                     ok: false,
                     err: 'The email is invalid'
                 });
@@ -361,6 +444,215 @@ app.post('/getUser', checkToken, (req, res) => {
                 projects
             });
         });
+    });
+});
+
+
+
+app.put('/editUser', checkToken, (req, res) => {
+
+    let id = req.body.id;
+    let body = _.pick(req.body, ['name', 'email', 'img', 'description', 'phone', 'skills', 'courses', 'certificates']);
+
+    User.findOne({ email: req.body.email }, (err, check) => {
+        if (err) {
+            return res.json({
+                ok: false,
+                err
+            });
+        }
+
+        if (check) {
+            if (check.id === id) {
+                User.findByIdAndUpdate(id, body, { new: true, runValidators: true }, (err, userDB) => {
+                    if (err) {
+                        return res.json({
+                            ok: false,
+                            err
+                        });
+                    }
+
+                    return res.json({
+                        ok: true,
+                        user: userDB
+                    });
+                });
+            } else {
+                return res.json({
+                    ok: false,
+                    err: {
+                        message: 'The email exists'
+                    }
+                });
+            }
+        } else {
+            User.findByIdAndUpdate(id, body, { new: true, runValidators: true }, (err, userDB) => {
+                if (err) {
+                    return res.json({
+                        ok: false,
+                        err
+                    });
+                }
+
+                return res.json({
+                    ok: true,
+                    user: userDB
+                });
+            });
+        }
+    });
+
+});
+
+app.put('/editCompany', checkToken, (req, res) => {
+
+    let id = req.body.id;
+    let body = _.pick(req.body, ['name', 'email', 'img', 'description', 'cif']);
+
+    Company.findOne({ email: req.body.email }, (err, check) => {
+        if (err) {
+            return res.json({
+                ok: false,
+                err
+            });
+        }
+
+        if (check) {
+            if (check.id === id) {
+                Company.findByIdAndUpdate(id, body, { new: true, runValidators: true }, (err, companyDB) => {
+                    if (err) {
+                        return res.json({
+                            ok: false,
+                            err
+                        });
+                    }
+
+                    return res.json({
+                        ok: true,
+                        company: companyDB
+                    });
+                });
+            } else {
+                return res.json({
+                    ok: false,
+                    err: {
+                        message: 'The email exists'
+                    }
+                });
+            }
+        } else {
+            Company.findByIdAndUpdate(id, body, { new: true, runValidators: true }, (err, companyDB) => {
+                if (err) {
+                    return res.json({
+                        ok: false,
+                        err
+                    });
+                }
+
+                return res.json({
+                    ok: true,
+                    company: companyDB
+                });
+            });
+        }
+    });
+
+});
+
+app.delete('/deleteAccount', (req, res) => {
+    let emailAccount = req.body.email;
+    let stateAccount = false;
+    let stateProject = 'Close';
+
+    User.findOneAndUpdate({ email: emailAccount }, { state: stateAccount }, (err, deletedUser) => {
+        if (err) {
+            return res.json({
+                ok: false,
+                err
+            });
+        }
+
+        if (deletedUser) {
+            InternalProject.countDocuments({ userOwner: emailAccount, state: { $ne: "Close" } }, (err, count) => {
+                if (err) {
+                    return res.json({
+                        ok: false,
+                        err
+                    });
+                }
+
+                if (count === 0) {
+                    return res.json({
+                        ok: true,
+                        deletedUser,
+                        count
+                    });
+                } else {
+                    for (let i = 1; i <= count; i++) {
+                        InternalProject.findOneAndUpdate({ userOwner: emailAccount }, { state: stateProject }, (err, totalProjects) => {
+                            if (err) {
+                                return res.json({
+                                    ok: false,
+                                    err
+                                });
+                            }
+                        });
+                    }
+
+                    return res.json({
+                        ok: true,
+                        deletedUser,
+                        count
+                    });
+                }
+            });
+
+        } else {
+            Company.findOneAndUpdate({ email: emailAccount }, { state: stateAccount }, (err, deletedCompany) => {
+                if (err) {
+                    return res.json({
+                        ok: false,
+                        err
+                    });
+                }
+
+                InternalProject.countDocuments({ userOwner: emailAccount, state: { $ne: "Close" } }, (err, count) => {
+                    if (err) {
+                        return res.json({
+                            ok: false,
+                            err
+                        });
+                    }
+
+                    if (count === 0) {
+                        return res.json({
+                            ok: true,
+                            deletedCompany,
+                            count
+                        });
+                    } else {
+                        for (let j = 1; j <= count; j++) {
+                            InternalProject.findOneAndUpdate({ userOwner: emailAccount, state: { $ne: "Close" } }, { state: stateProject }, (err, totalProjects) => {
+                                if (err) {
+                                    return res.json({
+                                        ok: false,
+                                        err
+                                    });
+                                }
+                            });
+                        }
+
+                        return res.json({
+                            ok: true,
+                            deletedCompany,
+                            count
+                        });
+                    }
+
+                });
+
+            });
+        }
     });
 });
 

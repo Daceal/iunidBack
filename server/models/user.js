@@ -15,7 +15,6 @@ let userSchema = new Schema({
     },
     email: {
         type: String,
-        unique: true,
         required: [true, 'Email must be necessary']
     },
     state: {
