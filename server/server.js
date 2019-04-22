@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 const app = express();
 const bodyParser = require('body-parser');
+var fs = require('fs');
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -33,6 +34,43 @@ mongoose.connect(process.env.URLDB, { useNewUrlParser: true, useCreateIndex: tru
 });
 
 // Api listener port
-app.listen(process.env.PORT, () => {
+server = app.listen(process.env.PORT, () => {
     console.log(`Port: ${process.env.PORT}`);
+});
+
+const io = require("socket.io")(server);
+var siofu = require("socketio-file-upload");
+
+io.on('connection', function(socket) {
+    var obj = [{}];
+    fs.readFile('input.json', 'utf8', function readFileCallback(err, data) {
+        if (err) {
+            console.log(err);
+        } else {
+            obj = JSON.parse(data);
+            socket.emit('messages', obj);
+        }
+    });
+
+    var uploader = new siofu();
+    uploader.dir = "uploads";
+    uploader.listen(socket);
+
+    uploader.on("saved", function(event) {
+        console.log(event.file);
+    });
+
+    socket.on('chat message', function(msg) {
+        obj.push({ author: "Anon", text: msg })
+        var json = JSON.stringify(obj);
+
+        fs.writeFile("input.json", json, function(err) {
+            if (err) throw err;
+            console.log('complete');
+        });
+        io.emit('chat message', msg);
+    });
+
+
+    socket.on('disconnect', function() {});
 });

@@ -78,11 +78,11 @@ let checkAdmin_Role = (req, res, next) => {
 
     let user = req.user;
 
-    if (user.role !== 'ADMIN_ROLE') {
+    if (user.userType !== 'ADMIN_ROLE' || user.userType !== 'EDITOR_ROLE') {
         return res.json({
             ok: false,
             err: {
-                message: 'User is not admin'
+                message: 'User is not admin or editor'
             }
         });
     }

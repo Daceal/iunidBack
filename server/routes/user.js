@@ -6,7 +6,6 @@ const User = require('../models/user');
 const Company = require('../models/company');
 const InternalProject = require('../models/internalProject');
 const ExternalProject = require('../models/externalProject');
-const path = require('path');
 const { checkToken } = require('../middlewares/authentication');
 const app = express();
 
@@ -559,7 +558,7 @@ app.put('/editCompany', checkToken, (req, res) => {
 
 });
 
-app.put('/editPassword', (req, res) => {
+app.put('/editPassword', checkToken, (req, res) => {
     let email = req.body.email;
     let password = req.body.password;
 
@@ -601,7 +600,7 @@ app.put('/editPassword', (req, res) => {
     });
 });
 
-app.delete('/deleteAccount', (req, res) => {
+app.delete('/deleteAccount', checkToken, (req, res) => {
     let emailAccount = req.body.email;
     let stateAccount = false;
     let stateProject = 'Close';
@@ -631,7 +630,7 @@ app.delete('/deleteAccount', (req, res) => {
                     });
                 } else {
                     for (let i = 1; i <= count; i++) {
-                        InternalProject.findOneAndUpdate({ userOwner: emailAccount }, { state: stateProject }, (err, totalProjects) => {
+                        InternalProject.findOneAndUpdate({ userOwner: emailAccount, state: { $ne: "Close" } }, { state: stateProject }, (err, totalProjects) => {
                             if (err) {
                                 return res.json({
                                     ok: false,

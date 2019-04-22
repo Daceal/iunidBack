@@ -3,7 +3,7 @@ const uniqueValidator = require('mongoose-unique-validator');
 
 let Schema = mongoose.Schema;
 
-let billSchema = new Schema({
+let fundsSchema = new Schema({
 
     benefits: {
         type: Number,
@@ -13,18 +13,17 @@ let billSchema = new Schema({
         type: Number,
         default: 0
     },
-    internalProjects: {
-        type: Schema.Types.ObjectId,
-        ref: 'InternalProjects'
+    internalProject: {
+        type: String,
+        required: true
     },
-    user: {
-        type: Schema.Types.ObjectId,
-        ref: 'Company'
+    email: {
+        type: String,
+        required: true
     }
-
 });
 
-billSchema.methods.toJSON = function() {
+fundsSchema.methods.toJSON = function() {
 
     let user = this;
     let userObject = user.toObject();
@@ -34,6 +33,6 @@ billSchema.methods.toJSON = function() {
 
 }
 
-billSchema.plugin(uniqueValidator, { message: '{PATH} must be unique' });
+fundsSchema.plugin(uniqueValidator, { message: '{PATH} must be unique' });
 
-module.exports = mongoose.model('Bill', billSchema);
+module.exports = mongoose.model('Funds', fundsSchema);
