@@ -176,14 +176,15 @@ app.post('/registerUser', (req, res) => {
 
                 if (!check) {
                     let user = new User({
-                        email: body.email,
-                        password: bcrypt.hashSync(body.password, 10),
                         name: body.name,
-                        img: body.img,
+                        email: body.email,
                         description: body.description,
+                        phone: body.phone,
+                        password: bcrypt.hashSync(body.password, 10),
                         skills: body.skills,
                         courses: body.courses,
-                        certificates: body.certificates
+                        certificates: body.certificates,
+                        img: body.img
                     });
 
                     user.save((err, userDB) => {
@@ -245,13 +246,6 @@ app.post('/registerCompany', (req, res) => {
             });
         }
 
-        if (!body.contactEmail) {
-            return res.json({
-                ok: false,
-                err: 'The contact email is empty'
-            });
-        }
-
         if (companyDB) {
             return res.json({
                 ok: false,
@@ -261,13 +255,13 @@ app.post('/registerCompany', (req, res) => {
             User.findOne({ email: body.email }, (err, check) => {
                 if (!check) {
                     let company = new Company({
-                        email: body.email,
                         name: body.name,
-                        cif: body.cif,
-                        description: body.description,
-                        img: body.img,
+                        email: body.email,
                         contactEmail: body.contactEmail,
-                        password: bcrypt.hashSync(body.password, 10)
+                        description: body.description,
+                        password: bcrypt.hashSync(body.password, 10),
+                        img: body.img,
+                        cif: body.cif
                     });
 
                     company.save((err, companyDB) => {
@@ -446,14 +440,21 @@ app.post('/getUser', checkToken, (req, res) => {
     });
 });
 
-
+/**
+ * Method name:
+ *      editUser
+ * 
+ * Received parameters:
+ *      body
+ * 
+ * 
+ * 
+ */
 
 app.put('/editUser', checkToken, (req, res) => {
+    let body = _.pick(req.body, ['name', 'img', 'description', 'phone', 'skills', 'courses', 'certificates']);
 
-    let id = req.body.id;
-    let body = _.pick(req.body, ['name', 'email', 'img', 'description', 'phone', 'skills', 'courses', 'certificates']);
-
-    User.findOne({ email: req.body.email }, (err, check) => {
+    User.findOne({ email: req.body.email }, (err, checkUser) => {
         if (err) {
             return res.json({
                 ok: false,
@@ -461,31 +462,8 @@ app.put('/editUser', checkToken, (req, res) => {
             });
         }
 
-        if (check) {
-            if (check.id === id) {
-                User.findByIdAndUpdate(id, body, { new: true, runValidators: true }, (err, userDB) => {
-                    if (err) {
-                        return res.json({
-                            ok: false,
-                            err
-                        });
-                    }
-
-                    return res.json({
-                        ok: true,
-                        user: userDB
-                    });
-                });
-            } else {
-                return res.json({
-                    ok: false,
-                    err: {
-                        message: 'The email exists'
-                    }
-                });
-            }
-        } else {
-            User.findByIdAndUpdate(id, body, { new: true, runValidators: true }, (err, userDB) => {
+        if (checkUser) {
+            User.findOneAndUpdate(email, body, { new: true, runValidators: true }, (err, userDB) => {
                 if (err) {
                     return res.json({
                         ok: false,
@@ -498,6 +476,13 @@ app.put('/editUser', checkToken, (req, res) => {
                     user: userDB
                 });
             });
+        } else {
+            return res.json({
+                ok: false,
+                err: {
+                    message: 'The email don´t exists'
+                }
+            });
         }
     });
 
@@ -508,7 +493,7 @@ app.put('/editCompany', checkToken, (req, res) => {
     let id = req.body.id;
     let body = _.pick(req.body, ['name', 'email', 'img', 'description']);
 
-    Company.findOne({ email: req.body.email }, (err, check) => {
+    Company.findOne({ email: req.body.email }, (err, checkCompany) => {
         if (err) {
             return res.json({
                 ok: false,
@@ -516,31 +501,8 @@ app.put('/editCompany', checkToken, (req, res) => {
             });
         }
 
-        if (check) {
-            if (check.id === id) {
-                Company.findByIdAndUpdate(id, body, { new: true, runValidators: true }, (err, companyDB) => {
-                    if (err) {
-                        return res.json({
-                            ok: false,
-                            err
-                        });
-                    }
-
-                    return res.json({
-                        ok: true,
-                        company: companyDB
-                    });
-                });
-            } else {
-                return res.json({
-                    ok: false,
-                    err: {
-                        message: 'The email exists'
-                    }
-                });
-            }
-        } else {
-            Company.findByIdAndUpdate(id, body, { new: true, runValidators: true }, (err, companyDB) => {
+        if (checkCompany) {
+            Company.findOneAndUpdate(email, body, { new: true, runValidators: true }, (err, companyDB) => {
                 if (err) {
                     return res.json({
                         ok: false,
@@ -552,6 +514,13 @@ app.put('/editCompany', checkToken, (req, res) => {
                     ok: true,
                     company: companyDB
                 });
+            });
+        } else {
+            return res.json({
+                ok: false,
+                err: {
+                    message: 'The email don´t exists'
+                }
             });
         }
     });

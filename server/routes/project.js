@@ -477,6 +477,17 @@ app.put('/addingPendingRequest', checkToken, (req, res) => {
     });
 });
 
+/**
+ * Method name:
+ *      editInternalProject
+ * 
+ * Received parameters:
+ *      idProject, body
+ * 
+ * The method find a internal project by id and update the changes
+ * 
+ */
+
 app.put('/editInternalProject', checkToken, (req, res) => {
     let idProject = req.body.id;
     let body = req.body;
@@ -495,6 +506,17 @@ app.put('/editInternalProject', checkToken, (req, res) => {
         });
     });
 });
+
+/**
+ * Method name:
+ *      editExternalProject
+ * 
+ * Received parameters:
+ *      idProject, body
+ * 
+ * The method find a external project by id and update the changes
+ * 
+ */
 
 app.put('/editExternalProject', checkToken, (req, res) => {
     let idProject = req.body.id;
@@ -515,6 +537,17 @@ app.put('/editExternalProject', checkToken, (req, res) => {
     });
 });
 
+/**
+ * Method name:
+ *      deleteInternalProject
+ * 
+ * Received parameters:
+ *      idProject
+ * 
+ * The method find a external project by id and delete it
+ * 
+ */
+
 app.delete('/deleteInternalProject', checkToken, (req, res) => {
     let idProject = req.body.id;
 
@@ -532,6 +565,17 @@ app.delete('/deleteInternalProject', checkToken, (req, res) => {
         });
     });
 });
+
+/**
+ * Method name:
+ *      deleteExternalProject
+ * 
+ * Received parameters:
+ *      idProject
+ * 
+ * The method find a external project by id and delete it
+ * 
+ */
 
 app.delete('/deleteExternalProject', checkToken, (req, res) => {
     let idProject = req.body.id;

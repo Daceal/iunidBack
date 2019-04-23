@@ -35,7 +35,7 @@ app.post('/getUsers', [checkToken, checkAdmin_Role], (req, res) => {
     });
 });
 
-app.post('/newUser', (req, res) => {
+app.post('/newUser', [checkToken, checkAdmin_Role], (req, res) => {
 
     let body = req.body;
 
@@ -74,7 +74,6 @@ app.post('/newUser', (req, res) => {
             contactEmail: body.contactEmail,
             state: body.state,
             description: body.description,
-            phone: body.phone,
             password: bcrypt.hashSync(body.password, 10),
             img: body.img,
             userType: body.userType,
@@ -116,10 +115,8 @@ app.post('/newUser', (req, res) => {
     }
 });
 
-app.put('/editUser', checkToken, (req, res) => {
-
-    let id = req.body.id;
-    let body = _.pick(req.body, ['name', 'email', 'img', 'description', 'phone', 'skills', 'courses', 'certificates']);
+app.put('/editUser', [checkToken, checkAdmin_Role], (req, res) => {
+    let body = req.body;
 
     User.findOne({ email: req.body.email }, (err, check) => {
         if (err) {
@@ -130,30 +127,7 @@ app.put('/editUser', checkToken, (req, res) => {
         }
 
         if (check) {
-            if (check.id === id) {
-                User.findByIdAndUpdate(id, body, { new: true, runValidators: true }, (err, userDB) => {
-                    if (err) {
-                        return res.json({
-                            ok: false,
-                            err
-                        });
-                    }
-
-                    return res.json({
-                        ok: true,
-                        user: userDB
-                    });
-                });
-            } else {
-                return res.json({
-                    ok: false,
-                    err: {
-                        message: 'The email exists'
-                    }
-                });
-            }
-        } else {
-            User.findByIdAndUpdate(id, body, { new: true, runValidators: true }, (err, userDB) => {
+            User.findOneAndUpdate(email, body, { new: true, runValidators: true }, (err, userDB) => {
                 if (err) {
                     return res.json({
                         ok: false,
@@ -166,15 +140,20 @@ app.put('/editUser', checkToken, (req, res) => {
                     user: userDB
                 });
             });
+        } else {
+            return res.json({
+                ok: false,
+                err: {
+                    message: 'The email don´t exists'
+                }
+            });
         }
     });
 
 });
 
-app.put('/editCompany', checkToken, (req, res) => {
-
-    let id = req.body.id;
-    let body = _.pick(req.body, ['name', 'email', 'img', 'description']);
+app.put('/editCompany', [checkToken, checkAdmin_Role], (req, res) => {
+    let body = req.body;
 
     Company.findOne({ email: req.body.email }, (err, check) => {
         if (err) {
@@ -185,30 +164,7 @@ app.put('/editCompany', checkToken, (req, res) => {
         }
 
         if (check) {
-            if (check.id === id) {
-                Company.findByIdAndUpdate(id, body, { new: true, runValidators: true }, (err, companyDB) => {
-                    if (err) {
-                        return res.json({
-                            ok: false,
-                            err
-                        });
-                    }
-
-                    return res.json({
-                        ok: true,
-                        company: companyDB
-                    });
-                });
-            } else {
-                return res.json({
-                    ok: false,
-                    err: {
-                        message: 'The email exists'
-                    }
-                });
-            }
-        } else {
-            Company.findByIdAndUpdate(id, body, { new: true, runValidators: true }, (err, companyDB) => {
+            Company.findOneAndUpdate(email, body, { new: true, runValidators: true }, (err, companyDB) => {
                 if (err) {
                     return res.json({
                         ok: false,
@@ -221,12 +177,19 @@ app.put('/editCompany', checkToken, (req, res) => {
                     company: companyDB
                 });
             });
+        } else {
+            return res.json({
+                ok: false,
+                err: {
+                    message: 'The email don´t exists'
+                }
+            });
         }
     });
 
 });
 
-app.delete('/removeAccount', (req, res) => {
+app.delete('/removeAccount', [checkToken, checkAdmin_Role], (req, res) => {
     let emailAccount = req.body.email;
 
     User.findOneAndRemove({ email: emailAccount }, (err, deletedUser) => {
