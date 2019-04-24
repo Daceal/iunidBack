@@ -118,7 +118,7 @@ app.post('/newUser', [checkToken, checkAdmin_Role], (req, res) => {
 app.put('/editUser', [checkToken, checkAdmin_Role], (req, res) => {
     let body = req.body;
 
-    User.findOne({ email: req.body.email }, (err, check) => {
+    User.findOne({ email: body.email }, (err, check) => {
         if (err) {
             return res.json({
                 ok: false,
@@ -144,7 +144,7 @@ app.put('/editUser', [checkToken, checkAdmin_Role], (req, res) => {
             return res.json({
                 ok: false,
                 err: {
-                    message: 'The email don´t exists'
+                    message: 'The email doesn´t exists'
                 }
             });
         }
@@ -155,7 +155,7 @@ app.put('/editUser', [checkToken, checkAdmin_Role], (req, res) => {
 app.put('/editCompany', [checkToken, checkAdmin_Role], (req, res) => {
     let body = req.body;
 
-    Company.findOne({ email: req.body.email }, (err, check) => {
+    Company.findOne({ email: body.email }, (err, check) => {
         if (err) {
             return res.json({
                 ok: false,
@@ -181,7 +181,7 @@ app.put('/editCompany', [checkToken, checkAdmin_Role], (req, res) => {
             return res.json({
                 ok: false,
                 err: {
-                    message: 'The email don´t exists'
+                    message: 'The email doesn´t exists'
                 }
             });
         }

@@ -479,20 +479,107 @@ app.put('/addingPendingRequest', checkToken, (req, res) => {
 
 /**
  * Method name:
+ *      acceptPendingRequest
+ * 
+ * Received parameters:
+ *      projectId, userEmail
+ * 
+ * Find the project by id and change the user email from pendingAccepts to users. 
+ */
+
+app.post('/acceptPendingRequest', checkToken, (req, res) => {
+    let projectId = req.body.id;
+    let userEmail = req.body.email;
+
+    InternalProject.findByIdAndUpdate(projectId, { $push: { "users": userEmail }, $pull: { "pendingAccepts": userEmail } }, (err, changeEmail) => {
+        if (err) {
+            return res.json({
+                ok: false,
+                err
+            });
+        }
+
+        return res.json({
+            ok: true,
+            project: changeEmail
+        });
+    });
+});
+
+/**
+ * Method name:
+ *      denyPendingRequest
+ * 
+ * Received parameters:
+ *      projectId, userEmail
+ * 
+ * Find the project by id and remove the user email from users. 
+ */
+
+app.post('/denyPendingRequest', checkToken, (req, res) => {
+    let projectId = req.body.id;
+    let userEmail = req.body.email;
+
+    InternalProject.findByIdAndUpdate(projectId, { $pull: { "pendingAccepts": userEmail } }, (err, removeEmail) => {
+        if (err) {
+            return res.json({
+                ok: false,
+                err
+            });
+        }
+
+        return res.json({
+            ok: true,
+            project: removeEmail
+        });
+    });
+});
+
+/**
+ * Method name:
+ *      closeProject
+ * 
+ * Received parameters:
+ *      projectId
+ * 
+ * Find the project by id and change the state to close. 
+ */
+
+app.post('/closeProject', (req, res) => {
+    let projectId = req.body.id;
+    let state = 'Close';
+
+    InternalProject.findByIdAndUpdate(projectId, { state: state }, (err, closeProject) => {
+        if (err) {
+            return res.json({
+                ok: false,
+                err
+            });
+        }
+
+        return res.json({
+            ok: true,
+            project: closeProject
+        });
+    });
+});
+
+/**
+ * Method name:
  *      editInternalProject
  * 
  * Received parameters:
- *      idProject, body
+ *      projectId, body
  * 
  * The method find a internal project by id and update the changes
  * 
  */
 
 app.put('/editInternalProject', checkToken, (req, res) => {
-    let idProject = req.body.id;
+    let projectId = req.body.id;
     let body = req.body;
 
-    InternalProject.findByIdAndUpdate(idProject, body, (err, internalProjectEdited) => {
+    InternalProject.findByIdAndUpdate(projectId, body, (err, internalProjectEdited) => {
         if (err) {
             return res.json({
                 ok: false,
@@ -512,17 +599,17 @@ app.put('/editInternalProject', checkToken, (req, res) => {
  *      editExternalProject
  * 
  * Received parameters:
- *      idProject, body
+ *      projectId, body
  * 
  * The method find a external project by id and update the changes
  * 
  */
 
 app.put('/editExternalProject', checkToken, (req, res) => {
-    let idProject = req.body.id;
+    let projectId = req.body.id;
     let body = req.body;
 
-    ExternalProject.findByIdAndUpdate(idProject, body, (err, externalProjectEdited) => {
+    ExternalProject.findByIdAndUpdate(projectId, body, (err, externalProjectEdited) => {
         if (err) {
             return res.json({
                 ok: false,
@@ -542,16 +629,16 @@ app.put('/editExternalProject', checkToken, (req, res) => {
  *      deleteInternalProject
  * 
  * Received parameters:
- *      idProject
+ *      projectId
  * 
  * The method find a external project by id and delete it
  * 
  */
 
 app.delete('/deleteInternalProject', checkToken, (req, res) => {
-    let idProject = req.body.id;
+    let projectId = req.body.id;
 
-    InternalProject.findByIdAndDelete(idProject, (err, deletedProject) => {
+    InternalProject.findByIdAndDelete(projectId, (err, deletedProject) => {
         if (err) {
             return res.json({
                 ok: false,
@@ -571,16 +658,16 @@ app.delete('/deleteInternalProject', checkToken, (req, res) => {
  *      deleteExternalProject
  * 
  * Received parameters:
- *      idProject
+ *      projectId
  * 
  * The method find a external project by id and delete it
  * 
  */
 
 app.delete('/deleteExternalProject', checkToken, (req, res) => {
-    let idProject = req.body.id;
+    let projectId = req.body.id;
 
-    ExternalProject.findByIdAndDelete(idProject, (err, deletedProject) => {
+    ExternalProject.findByIdAndDelete(projectId, (err, deletedProject) => {
         if (err) {
             return res.json({
                 ok: false,

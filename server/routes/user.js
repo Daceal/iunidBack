@@ -401,7 +401,7 @@ app.post('/getCompany', checkToken, (req, res) => {
 app.post('/getUser', checkToken, (req, res) => {
     let email = req.body.email;
 
-    User.findOne({ email: email }, 'name email description score skills courses certificates img', function(err, user) {
+    User.findOne({ email: email }, 'name email description score skills courses certificates img phone', function(err, user) {
         if (err) {
             return res.json({
                 ok: false,
@@ -452,9 +452,9 @@ app.post('/getUser', checkToken, (req, res) => {
  */
 
 app.put('/editUser', checkToken, (req, res) => {
-    let body = _.pick(req.body, ['name', 'img', 'description', 'phone', 'skills', 'courses', 'certificates']);
+    let body = _.pick(req.body, ['name', 'email', 'img', 'description', 'phone', 'skills', 'courses', 'certificates']);
 
-    User.findOne({ email: req.body.email }, (err, checkUser) => {
+    User.findOne({ email: body.email }, (err, checkUser) => {
         if (err) {
             return res.json({
                 ok: false,
@@ -463,7 +463,7 @@ app.put('/editUser', checkToken, (req, res) => {
         }
 
         if (checkUser) {
-            User.findOneAndUpdate(email, body, { new: true, runValidators: true }, (err, userDB) => {
+            User.findOneAndUpdate({ email: body.email }, body, { new: true, runValidators: true }, (err, userDB) => {
                 if (err) {
                     return res.json({
                         ok: false,
@@ -480,7 +480,7 @@ app.put('/editUser', checkToken, (req, res) => {
             return res.json({
                 ok: false,
                 err: {
-                    message: 'The email don´t exists'
+                    message: 'The email doesn´t exists'
                 }
             });
         }
@@ -489,11 +489,9 @@ app.put('/editUser', checkToken, (req, res) => {
 });
 
 app.put('/editCompany', checkToken, (req, res) => {
-
-    let id = req.body.id;
     let body = _.pick(req.body, ['name', 'email', 'img', 'description']);
 
-    Company.findOne({ email: req.body.email }, (err, checkCompany) => {
+    Company.findOne({ email: body.email }, (err, checkCompany) => {
         if (err) {
             return res.json({
                 ok: false,
@@ -502,7 +500,7 @@ app.put('/editCompany', checkToken, (req, res) => {
         }
 
         if (checkCompany) {
-            Company.findOneAndUpdate(email, body, { new: true, runValidators: true }, (err, companyDB) => {
+            Company.findOneAndUpdate({ email: body.email }, body, { new: true, runValidators: true }, (err, companyDB) => {
                 if (err) {
                     return res.json({
                         ok: false,
@@ -519,7 +517,7 @@ app.put('/editCompany', checkToken, (req, res) => {
             return res.json({
                 ok: false,
                 err: {
-                    message: 'The email don´t exists'
+                    message: 'The email doesn´t exists'
                 }
             });
         }
