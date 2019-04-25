@@ -44,8 +44,8 @@ let internalProjectSchema = new Schema({
         required: true
     },
     counteroffer: {
-        type: Boolean,
-        default: false
+        type: Array,
+        default: []
     },
     state: {
         type: String,
@@ -58,7 +58,7 @@ let internalProjectSchema = new Schema({
     },
     delivery: {
         type: Array,
-        default: {}
+        default: []
     },
     userOwner: {
         type: String,

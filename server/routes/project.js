@@ -635,7 +635,7 @@ app.put('/editExternalProject', checkToken, (req, res) => {
  * 
  */
 
-app.delete('/deleteInternalProject', checkToken, (req, res) => {
+app.post('/deleteInternalProject', checkToken, (req, res) => {
     let projectId = req.body.id;
 
     InternalProject.findByIdAndDelete(projectId, (err, deletedProject) => {
@@ -664,7 +664,7 @@ app.delete('/deleteInternalProject', checkToken, (req, res) => {
  * 
  */
 
-app.delete('/deleteExternalProject', checkToken, (req, res) => {
+app.post('/deleteExternalProject', checkToken, (req, res) => {
     let projectId = req.body.id;
 
     ExternalProject.findByIdAndDelete(projectId, (err, deletedProject) => {
@@ -680,6 +680,51 @@ app.delete('/deleteExternalProject', checkToken, (req, res) => {
             project: deletedProject
         });
     });
+});
+
+app.post('/kickPerson', checkToken, (req, res) => {
+    let projectId = req.body.id;
+    let userEmail = req.body.email;
+
+    InternalProject.findByIdAndUpdate(projectId, { $pull: { users: userEmail } }, (err, userKicked) => {
+        if (err) {
+            return res.json({
+                ok: false,
+                err
+            });
+        }
+
+        return res.json({
+            ok: true,
+            project: userKicked
+        });
+    });
+});
+
+app.post('/counterOffer', (req, res) => {
+    let userEmail = req.body.email;
+    let price = req.body.price;
+    let projectId = req.body.id;
+    let counterOffer = {
+        user: userEmail,
+        offer: price
+    };
+
+
+    InternalProject.findByIdAndUpdate(projectId, { $push: { counteroffer: counterOffer } }, (err, projectOffer) => {
+        if (err) {
+            return res.json({
+                ok: false,
+                err
+            });
+        }
+
+        return res.json({
+            ok: true,
+            project: projectOffer
+        });
+    });
+
 });
 
 module.exports = app;

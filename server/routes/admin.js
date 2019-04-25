@@ -189,7 +189,7 @@ app.put('/editCompany', [checkToken, checkAdmin_Role], (req, res) => {
 
 });
 
-app.delete('/removeAccount', [checkToken, checkAdmin_Role], (req, res) => {
+app.post('/removeAccount', [checkToken, checkAdmin_Role], (req, res) => {
     let emailAccount = req.body.email;
 
     User.findOneAndRemove({ email: emailAccount }, (err, deletedUser) => {
