@@ -43,7 +43,11 @@ let internalProjectSchema = new Schema({
         type: Date,
         required: true
     },
-    counteroffer: {
+    counterOffer: {
+        type: Boolean,
+        default: false
+    },
+    counterOfferData: {
         type: Array,
         default: []
     },
