@@ -113,7 +113,7 @@ app.post('/createInternalProject', checkToken, (req, res) => {
         maxPrice: maxPrice,
         initialDate: initialDate,
         deliveryDate: deliveryDate,
-        counteroffer: counterOffer,
+        counterOffer: counterOffer,
         users: users,
         category: category,
         pendingAccepts: pendingAccepts
@@ -491,7 +491,7 @@ app.post('/acceptPendingRequest', checkToken, (req, res) => {
     let projectId = req.body.id;
     let userEmail = req.body.userEmail;
 
-    InternalProject.findByIdAndUpdate(projectId, { $push: { "users": userEmail }, $pull: { "pendingAccepts": userEmail } }, (err, changeEmail) => {
+    InternalProject.findByIdAndUpdate(projectId, { $push: { users: userEmail }, $pull: { pendingAccepts: userEmail } }, (err, changeEmail) => {
         if (err) {
             return res.json({
                 ok: false,
@@ -520,7 +520,7 @@ app.post('/denyPendingRequest', checkToken, (req, res) => {
     let projectId = req.body.id;
     let userEmail = req.body.userEmail;
 
-    InternalProject.findByIdAndUpdate(projectId, { $pull: { "pendingAccepts": userEmail } }, (err, removeEmail) => {
+    InternalProject.findByIdAndUpdate(projectId, { $pull: { pendingAccepts: userEmail } }, (err, removeEmail) => {
         if (err) {
             return res.json({
                 ok: false,
@@ -554,8 +554,8 @@ app.post('/kickPerson', checkToken, (req, res) => {
     });
 });
 
-app.post('/counterOffer', (req, res) => {
-    let userEmail = req.body.userEmail;
+app.post('/counterOffer', checkToken, (req, res) => {
+    let userEmail = req.body.email;
     let price = req.body.price;
     let projectId = req.body.id;
     let counterOffer = {
@@ -589,7 +589,7 @@ app.post('/counterOffer', (req, res) => {
  * Find the project by id and change the state to close. 
  */
 
-app.post('/closeProject', (req, res) => {
+app.post('/closeProject', checkToken, (req, res) => {
     let projectId = req.body.id;
     let state = 'Close';
 

@@ -567,7 +567,7 @@ app.put('/editPassword', checkToken, (req, res) => {
     });
 });
 
-app.delete('/deleteAccount', checkToken, (req, res) => {
+app.post('/deleteAccount', checkToken, (req, res) => {
     let emailAccount = req.body.email;
     let stateAccount = false;
     let stateProject = 'Close';
