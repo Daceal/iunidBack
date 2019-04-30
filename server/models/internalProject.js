@@ -79,6 +79,10 @@ let internalProjectSchema = new Schema({
     },
     pendingAccepts: {
         type: Array
+    },
+    pendingCounterOffer: {
+        type: Array,
+        default: []
     }
 });
 

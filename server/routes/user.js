@@ -344,6 +344,9 @@ app.post('/obtainContacts', checkToken, (req, res) => {
 
 app.post('/getCompany', checkToken, (req, res) => {
     let email = req.body.email;
+    let average = 0;
+    let sum = 0;
+    let cont = 0;
 
     Company.findOne({ email: email }, 'name email contactEmail description score img contacts', function(err, company) {
         if (err) {
@@ -359,6 +362,12 @@ app.post('/getCompany', checkToken, (req, res) => {
                 err: 'The email is invalid'
             });
         }
+
+        for (var i = 0; i < company.score.length; i++) {
+            sum = sum + parseInt(company.score[i].score);
+            cont++;
+        }
+        average = (sum / cont);
 
         ExternalProject.find({ userOwner: email }, (err, projects) => {
             if (err) {
@@ -378,7 +387,8 @@ app.post('/getCompany', checkToken, (req, res) => {
             return res.json({
                 ok: true,
                 company,
-                projects
+                projects,
+                average
             });
         });
     });
@@ -400,6 +410,9 @@ app.post('/getCompany', checkToken, (req, res) => {
 
 app.post('/getUser', checkToken, (req, res) => {
     let email = req.body.email;
+    let average = 0;
+    let sum = 0;
+    let cont = 0;
 
     User.findOne({ email: email }, 'name email description score skills courses certificates img phone', function(err, user) {
         if (err) {
@@ -415,6 +428,12 @@ app.post('/getUser', checkToken, (req, res) => {
                 err: 'The email is invalid'
             });
         }
+
+        for (var i = 0; i < user.score.length; i++) {
+            sum = sum + parseInt(user.score[i].score);
+            cont++;
+        }
+        average = (sum / cont);
 
         ExternalProject.find({ userOwner: email }, (err, projects) => {
             if (err) {
@@ -434,7 +453,8 @@ app.post('/getUser', checkToken, (req, res) => {
             return res.json({
                 ok: true,
                 user,
-                projects
+                projects,
+                average
             });
         });
     });
@@ -564,6 +584,30 @@ app.put('/editPassword', checkToken, (req, res) => {
                 });
             });
         }
+    });
+});
+
+app.post('/addScore', checkToken, (req, res) => {
+    let email = req.body.email;
+    let userEmail = req.body.userEmail;
+    let score = req.body.score;
+    let addScore = {
+        user: userEmail,
+        score: score
+    }
+
+    User.findOneAndUpdate({ email: email }, { $push: { score: addScore } }, (err, score) => {
+        if (err) {
+            return res.json({
+                ok: false,
+                err
+            });
+        }
+
+        return res.json({
+            ok: true,
+            user: score
+        });
     });
 });
 

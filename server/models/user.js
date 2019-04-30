@@ -3,7 +3,7 @@ const uniqueValidator = require('mongoose-unique-validator');
 
 let validRoles = {
     values: ['ADMIN_ROLE', 'USER_ROLE', 'COMPANY_ROLE', 'EDITOR_ROLE'],
-    message: '{VALUE} no es un rol válido'
+    message: '{VALUE} is not a valid role'
 };
 
 let Schema = mongoose.Schema;
@@ -22,16 +22,14 @@ let userSchema = new Schema({
         default: true
     },
     description: {
-        type: String,
-        required: false
+        type: String
     },
     phone: {
-        type: String,
-        required: false
+        type: String
     },
     score: {
-        type: Number,
-        required: false
+        type: Array,
+        default: []
     },
     password: {
         type: String,
@@ -43,15 +41,14 @@ let userSchema = new Schema({
     },
     courses: {
         type: Array,
-        default: {}
+        default: []
     },
     certificates: {
         type: Array,
-        default: {}
+        default: []
     },
     img: {
-        type: String,
-        required: false
+        type: String
     },
     google: {
         type: Boolean,

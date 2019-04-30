@@ -555,15 +555,15 @@ app.post('/kickPerson', checkToken, (req, res) => {
 });
 
 app.post('/counterOffer', checkToken, (req, res) => {
+    let projectId = req.body.id;
     let userEmail = req.body.email;
     let price = req.body.price;
-    let projectId = req.body.id;
     let counterOffer = {
         user: userEmail,
         offer: price
     };
 
-    InternalProject.findByIdAndUpdate(projectId, { $push: { counterOfferData: counterOffer } }, (err, projectOffer) => {
+    InternalProject.findByIdAndUpdate(projectId, { $push: { pendingCounterOffer: counterOffer } }, (err, projectOffer) => {
         if (err) {
             return res.json({
                 ok: false,
@@ -574,6 +574,56 @@ app.post('/counterOffer', checkToken, (req, res) => {
         return res.json({
             ok: true,
             project: projectOffer
+        });
+    });
+
+});
+
+app.post('/acceptCounterOffer', checkToken, (req, res) => {
+    let projectId = req.body.id;
+    let userEmail = req.body.email;
+    let price = req.body.price;
+    let counterOffer = {
+        user: userEmail,
+        offer: price
+    };
+
+    InternalProject.findByIdAndUpdate(projectId, { $push: { counterOfferData: counterOffer }, $pull: { pendingCounterOffer: counterOffer } }, (err, accepted) => {
+        if (err) {
+            return res.json({
+                ok: false,
+                err
+            });
+        }
+
+        return res.json({
+            ok: true,
+            project: accepted
+        });
+    });
+
+});
+
+app.post('/denyCounterOffer', checkToken, (req, res) => {
+    let projectId = req.body.id;
+    let userEmail = req.body.email;
+    let price = req.body.price;
+    let counterOffer = {
+        user: userEmail,
+        offer: price
+    };
+
+    InternalProject.findByIdAndUpdate(projectId, { $pull: { pendingCounterOffer: counterOffer } }, (err, denied) => {
+        if (err) {
+            return res.json({
+                ok: false,
+                err
+            });
+        }
+
+        return res.json({
+            ok: true,
+            project: denied
         });
     });
 
