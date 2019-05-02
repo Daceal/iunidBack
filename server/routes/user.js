@@ -460,6 +460,81 @@ app.post('/getUser', checkToken, (req, res) => {
     });
 });
 
+app.post('/getUsersByCertificates', (req, res) => {
+    let certificates = req.body.certificates;
+
+    User.find({ certificates: { $all: certificates } }, (err, users) => {
+        if (err) {
+            return res.json({
+                ok: false,
+                err
+            });
+        }
+
+        if (users.length === 0) {
+            return res.json({
+                ok: false,
+                message: 'There is not a user with this Certificates'
+            });
+        }
+
+        return res.json({
+            ok: true,
+            users
+        });
+    });
+});
+
+app.post('/getUsersByCourses', (req, res) => {
+    let courses = req.body.courses;
+
+    User.find({ courses: { $all: courses } }, (err, users) => {
+        if (err) {
+            return res.json({
+                ok: false,
+                err
+            });
+        }
+
+        if (users.length === 0) {
+            return res.json({
+                ok: false,
+                message: 'There is not a user with this Courses'
+            });
+        }
+
+        return res.json({
+            ok: true,
+            users
+        });
+    });
+});
+
+app.post('/getUsersBySkills', (req, res) => {
+    let skills = req.body.skills;
+
+    User.find({ skills: { $all: skills } }, (err, users) => {
+        if (err) {
+            return res.json({
+                ok: false,
+                err
+            });
+        }
+
+        if (users.length === 0) {
+            return res.json({
+                ok: false,
+                message: 'There is not a user with this Skills'
+            });
+        }
+
+        return res.json({
+            ok: true,
+            users
+        });
+    });
+});
+
 /**
  * Method name:
  *      editUser

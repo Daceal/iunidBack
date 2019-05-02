@@ -350,7 +350,7 @@ app.post('/obtainProjectTags', checkToken, (req, res) => {
             return res.json({
                 ok: false,
                 message: 'There is not a project with this tags'
-            })
+            });
         }
 
         return res.json({
