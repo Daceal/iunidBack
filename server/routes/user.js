@@ -460,7 +460,7 @@ app.post('/getUser', checkToken, (req, res) => {
     });
 });
 
-app.post('/getUsersByCertificates', (req, res) => {
+app.post('/getUsersByCertificates', checkToken, (req, res) => {
     let certificates = req.body.certificates;
 
     User.find({ certificates: { $all: certificates } }, (err, users) => {
@@ -485,7 +485,7 @@ app.post('/getUsersByCertificates', (req, res) => {
     });
 });
 
-app.post('/getUsersByCourses', (req, res) => {
+app.post('/getUsersByCourses', checkToken, (req, res) => {
     let courses = req.body.courses;
 
     User.find({ courses: { $all: courses } }, (err, users) => {
@@ -510,7 +510,7 @@ app.post('/getUsersByCourses', (req, res) => {
     });
 });
 
-app.post('/getUsersBySkills', (req, res) => {
+app.post('/getUsersBySkills', checkToken, (req, res) => {
     let skills = req.body.skills;
 
     User.find({ skills: { $all: skills } }, (err, users) => {
@@ -666,12 +666,13 @@ app.post('/addScore', checkToken, (req, res) => {
     let email = req.body.email;
     let userEmail = req.body.userEmail;
     let score = req.body.score;
+    let check = false;
     let addScore = {
-        user: userEmail,
+        user: email,
         score: score
     }
 
-    User.findOneAndUpdate({ email: email }, { $push: { score: addScore } }, (err, score) => {
+    User.findOne({ email: userEmail }, (err, search) => {
         if (err) {
             return res.json({
                 ok: false,
@@ -679,10 +680,35 @@ app.post('/addScore', checkToken, (req, res) => {
             });
         }
 
-        return res.json({
-            ok: true,
-            user: score
-        });
+        for (let i = 0; i < search.score.length; i++) {
+            if (search.score[i].user === email) {
+                check = true;
+            }
+        }
+
+        if (!check) {
+            User.findOneAndUpdate({ email: userEmail }, { $push: { score: addScore } }, (err, addScore) => {
+                if (err) {
+                    return res.json({
+                        ok: false,
+                        err
+                    });
+                }
+
+                return res.json({
+                    ok: true,
+                    user: addScore
+                });
+            });
+
+        } else {
+            return res.json({
+                ok: false,
+                err: {
+                    message: 'You can´t vote this user'
+                }
+            });
+        }
     });
 });
 

@@ -581,14 +581,14 @@ app.post('/counterOffer', checkToken, (req, res) => {
 
 app.post('/acceptCounterOffer', checkToken, (req, res) => {
     let projectId = req.body.id;
-    let userEmail = req.body.email;
+    let userEmail = req.body.userEmail;
     let price = req.body.price;
     let counterOffer = {
         user: userEmail,
         offer: price
     };
 
-    InternalProject.findByIdAndUpdate(projectId, { $push: { counterOfferData: counterOffer }, $pull: { pendingCounterOffer: counterOffer } }, (err, accepted) => {
+    InternalProject.findByIdAndUpdate(projectId, { $push: { counterOfferData: counterOffer, users: userEmail }, $pull: { pendingCounterOffer: counterOffer } }, (err, accepted) => {
         if (err) {
             return res.json({
                 ok: false,
@@ -606,7 +606,7 @@ app.post('/acceptCounterOffer', checkToken, (req, res) => {
 
 app.post('/denyCounterOffer', checkToken, (req, res) => {
     let projectId = req.body.id;
-    let userEmail = req.body.email;
+    let userEmail = req.body.userEmail;
     let price = req.body.price;
     let counterOffer = {
         user: userEmail,
@@ -614,6 +614,31 @@ app.post('/denyCounterOffer', checkToken, (req, res) => {
     };
 
     InternalProject.findByIdAndUpdate(projectId, { $pull: { pendingCounterOffer: counterOffer } }, (err, denied) => {
+        if (err) {
+            return res.json({
+                ok: false,
+                err
+            });
+        }
+
+        return res.json({
+            ok: true,
+            project: denied
+        });
+    });
+
+});
+
+app.post('/deleteCounterOffer', checkToken, (req, res) => {
+    let projectId = req.body.id;
+    let userEmail = req.body.userEmail;
+    let price = req.body.price;
+    let counterOffer = {
+        user: userEmail,
+        offer: price
+    };
+
+    InternalProject.findByIdAndUpdate(projectId, { $pull: { counterOfferData: counterOffer } }, (err, denied) => {
         if (err) {
             return res.json({
                 ok: false,
