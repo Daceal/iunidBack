@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const paypal = require('paypal-rest-sdk');
+const InternalProject = require('../models/internalProject');
 
 paypal.configure({
     'mode': 'sandbox', //sandbox or live 
@@ -51,15 +52,48 @@ app.post('/buy', (req, res) => {
 
 // success page 
 app.get('/success', (req, res) => {
-    console.log(req.query);
+    let email = req.body.userEmail;
+    let userOffer = req.body.userOffer;
+    let pay = true;
+    let user = {
+        userEmail: email,
+        userOffer: userOffer,
+        userPay: pay
+    }
+
+    InternalProject.findOne({ email: email }, (err, changePayState) => {
+        if (err) {
+            return res.json({
+                ok: false,
+                err
+            });
+        }
+
+        for (let i = 0; i < changePayState.users.length; i++) {
+            if (changePayState.users[i].userEmail === email) {
+                InternalProject.findOneAndUpdate({ email: email }, { users: user }, (err, payChanged) => {
+                    if (err) {
+                        return res.json({
+                            ok: false,
+                            err
+                        });
+                    }
+
+                    return res.json({
+                        ok: true,
+                        project: payChanged
+                    });
+                });
+            }
+        }
+    });
     res.redirect('/success.html');
-})
+});
 
 // error page 
 app.get('/err', (req, res) => {
-    console.log(req.query);
     res.redirect('/err.html');
-})
+});
 
 // helper functions 
 var createPay = (payment) => {

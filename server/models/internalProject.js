@@ -47,10 +47,6 @@ let internalProjectSchema = new Schema({
         type: Boolean,
         default: false
     },
-    counterOfferData: {
-        type: Array,
-        default: []
-    },
     state: {
         type: String,
         default: 'Open',
@@ -70,7 +66,11 @@ let internalProjectSchema = new Schema({
     },
     users: {
         type: Array,
-        default: []
+        default: [
+            { userEmail: "" },
+            { userOffer: 0 },
+            { userPay: false }
+        ]
     },
     category: {
         type: String,
@@ -78,7 +78,8 @@ let internalProjectSchema = new Schema({
         enum: validCategory
     },
     pendingAccepts: {
-        type: Array
+        type: Array,
+        default: []
     },
     pendingCounterOffer: {
         type: Array,
