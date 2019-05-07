@@ -39,10 +39,10 @@ app.post('/newUser', [checkToken, checkAdmin_Role], (req, res) => {
 
     let body = req.body;
 
-    if (body.userType === 'USER_ROLE') {
+    if (body.newUserType === 'USER_ROLE') {
         let user = new User({
             name: body.name,
-            email: body.email,
+            email: body.userEmail,
             state: body.state,
             description: body.description,
             phone: body.phone,
@@ -51,7 +51,7 @@ app.post('/newUser', [checkToken, checkAdmin_Role], (req, res) => {
             courses: body.courses,
             certificates: body.certificates,
             img: body.img,
-            userType: body.userType
+            userType: body.newUserType
         });
 
         user.save((err, userDB) => {
@@ -67,16 +67,16 @@ app.post('/newUser', [checkToken, checkAdmin_Role], (req, res) => {
                 user: userDB
             });
         });
-    } else if (body.userType === 'COMPANY_ROLE') {
+    } else if (body.newUserType === 'COMPANY_ROLE') {
         let company = new Company({
             name: body.name,
-            email: body.email,
+            email: body.userEmail,
             contactEmail: body.contactEmail,
             state: body.state,
             description: body.description,
             password: bcrypt.hashSync(body.password, 10),
             img: body.img,
-            userType: body.userType,
+            userType: body.newUserType,
             cif: body.cif
         });
 
@@ -95,8 +95,9 @@ app.post('/newUser', [checkToken, checkAdmin_Role], (req, res) => {
         });
     } else {
         let admin = new Admin({
-            name: body.name,
-            userType: body.userType
+            email: body.userEmail,
+            password: bcrypt.hashSync(body.password, 10),
+            userType: body.newUserType
         });
 
         admin.save((err, adminDB) => {
@@ -115,10 +116,10 @@ app.post('/newUser', [checkToken, checkAdmin_Role], (req, res) => {
     }
 });
 
-app.put('/editUser', [checkToken, checkAdmin_Role], (req, res) => {
+app.put('/editUserAdmin', [checkToken, checkAdmin_Role], (req, res) => {
     let body = req.body;
 
-    User.findOne({ email: body.email }, (err, check) => {
+    User.findOne({ email: body.userEmail }, (err, check) => {
         if (err) {
             return res.json({
                 ok: false,
@@ -127,7 +128,7 @@ app.put('/editUser', [checkToken, checkAdmin_Role], (req, res) => {
         }
 
         if (check) {
-            User.findOneAndUpdate(email, body, { new: true, runValidators: true }, (err, userDB) => {
+            User.findOneAndUpdate({ email: userEmail }, body, { new: true, runValidators: true }, (err, userDB) => {
                 if (err) {
                     return res.json({
                         ok: false,
@@ -152,10 +153,10 @@ app.put('/editUser', [checkToken, checkAdmin_Role], (req, res) => {
 
 });
 
-app.put('/editCompany', [checkToken, checkAdmin_Role], (req, res) => {
+app.put('/editCompanyAdmin', [checkToken, checkAdmin_Role], (req, res) => {
     let body = req.body;
 
-    Company.findOne({ email: body.email }, (err, check) => {
+    Company.findOne({ email: body.userEmail }, (err, check) => {
         if (err) {
             return res.json({
                 ok: false,
@@ -164,7 +165,7 @@ app.put('/editCompany', [checkToken, checkAdmin_Role], (req, res) => {
         }
 
         if (check) {
-            Company.findOneAndUpdate(email, body, { new: true, runValidators: true }, (err, companyDB) => {
+            Company.findOneAndUpdate({ email: userEmail }, body, { new: true, runValidators: true }, (err, companyDB) => {
                 if (err) {
                     return res.json({
                         ok: false,
@@ -190,7 +191,7 @@ app.put('/editCompany', [checkToken, checkAdmin_Role], (req, res) => {
 });
 
 app.post('/removeAccount', [checkToken, checkAdmin_Role], (req, res) => {
-    let emailAccount = req.body.email;
+    let emailAccount = req.body.userEmail;
 
     User.findOneAndRemove({ email: emailAccount }, (err, deletedUser) => {
         if (err) {

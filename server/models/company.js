@@ -40,14 +40,6 @@ let companySchema = new Schema({
         type: String,
         required: false
     },
-    linkedin: {
-        type: Boolean,
-        default: false
-    },
-    facebook: {
-        type: Boolean,
-        default: false
-    },
     userType: {
         type: String,
         default: 'COMPANY_ROLE',

@@ -76,9 +76,9 @@ let checkToken = (req, res, next) => {
 
 let checkAdmin_Role = (req, res, next) => {
 
-    let user = req.user;
+    let userType = req.body.userType;
 
-    if (user.userType !== 'ADMIN_ROLE' || user.userType !== 'EDITOR_ROLE') {
+    if (userType !== 'ADMIN_ROLE' || userType !== 'EDITOR_ROLE') {
         return res.json({
             ok: false,
             err: {

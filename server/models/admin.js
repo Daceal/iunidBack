@@ -10,9 +10,13 @@ let validRoles = {
 let Schema = mongoose.Schema;
 
 let adminSchema = new Schema({
-    name: {
+    email: {
         type: String,
-        required: [true, 'Name must be necessary']
+        required: [true, 'Email must be necessary']
+    },
+    password: {
+        type: String,
+        required: [true, 'Password must be necessary']
     },
     userType: {
         type: String,
