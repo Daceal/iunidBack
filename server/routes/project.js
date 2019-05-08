@@ -518,7 +518,7 @@ app.post('/acceptPendingRequest', checkToken, (req, res) => {
  * Received parameters:
  *      projectId, userEmail
  * 
- * Find the project by id and remove the user email from users. 
+ * Find the project by id and remove the user from pendingAccepts. 
  */
 
 app.post('/denyPendingRequest', checkToken, (req, res) => {
@@ -540,6 +540,16 @@ app.post('/denyPendingRequest', checkToken, (req, res) => {
     });
 });
 
+/**
+ * Method name:
+ *      kickPerson
+ * 
+ * Received parameters:
+ *      projectId, userEmail
+ * 
+ * Find the project by id and remove the user from the project. 
+ */
+
 app.post('/kickPerson', checkToken, (req, res) => {
     let projectId = req.body.id;
     let userEmail = req.body.userEmail;
@@ -558,6 +568,19 @@ app.post('/kickPerson', checkToken, (req, res) => {
         });
     });
 });
+
+/**
+ * Method name:
+ *      addingCounterOffer
+ * 
+ * Received parameters:
+ *      projectId, userEmail, price
+ * 
+ * Find the project by id, then search the userEmail, if exists the user
+ * is in the project so don´t need to be added.
+ * 
+ * Finally add the counter offer in the pendingCounterOffer. 
+ */
 
 app.post('/addingCounterOffer', checkToken, (req, res) => {
     let projectId = req.body.id;
@@ -603,6 +626,16 @@ app.post('/addingCounterOffer', checkToken, (req, res) => {
     });
 });
 
+/**
+ * Method name:
+ *      acceptCounterOffer
+ * 
+ * Received parameters:
+ *      projectId, userEmail, price
+ * 
+ * Find the project by id and change the counter offer in pendingCounterOffer to users
+ */
+
 app.post('/acceptCounterOffer', checkToken, (req, res) => {
     let projectId = req.body.id;
     let userEmail = req.body.userEmail;
@@ -631,6 +664,16 @@ app.post('/acceptCounterOffer', checkToken, (req, res) => {
         });
     });
 });
+
+/**
+ * Method name:
+ *      denyCounterOffer
+ * 
+ * Received parameters:
+ *      projectId, userEmail, price
+ * 
+ * Find the project by id and remove the counter offer from pendingCounterOffer
+ */
 
 app.post('/denyCounterOffer', checkToken, (req, res) => {
     let projectId = req.body.id;

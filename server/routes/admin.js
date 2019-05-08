@@ -8,6 +8,12 @@ const ExternalProject = require('../models/externalProject');
 const { checkToken, checkAdmin_Role } = require('../middlewares/authentication');
 const app = express();
 
+/**
+ * Method name:
+ *      getUsers
+ * 
+ * The method find all the users in iUnid.
+ */
 
 app.post('/getUsers', [checkToken, checkAdmin_Role], (req, res) => {
     User.find({ state: true }, (err, usersDB) => {
@@ -34,6 +40,13 @@ app.post('/getUsers', [checkToken, checkAdmin_Role], (req, res) => {
         });
     });
 });
+
+/**
+ * Method name:
+ *      newUser
+ * 
+ * The method create a new user depending of the userType: admin, editor, company or user.
+ */
 
 app.post('/newUser', [checkToken, checkAdmin_Role], (req, res) => {
 
@@ -116,6 +129,13 @@ app.post('/newUser', [checkToken, checkAdmin_Role], (req, res) => {
     }
 });
 
+/**
+ * Method name:
+ *      editUserAdmin
+ * 
+ * The method edit a user by the email.
+ */
+
 app.put('/editUserAdmin', [checkToken, checkAdmin_Role], (req, res) => {
     let body = req.body;
 
@@ -153,6 +173,13 @@ app.put('/editUserAdmin', [checkToken, checkAdmin_Role], (req, res) => {
 
 });
 
+/**
+ * Method name:
+ *      editCompanyAdmin
+ * 
+ * The method edit a company by the email.
+ */
+
 app.put('/editCompanyAdmin', [checkToken, checkAdmin_Role], (req, res) => {
     let body = req.body;
 
@@ -189,6 +216,13 @@ app.put('/editCompanyAdmin', [checkToken, checkAdmin_Role], (req, res) => {
     });
 
 });
+
+/**
+ * Method name:
+ *      removeAccount
+ * 
+ * The method delete the account of the user/company by email.
+ */
 
 app.post('/removeAccount', [checkToken, checkAdmin_Role], (req, res) => {
     let emailAccount = req.body.userEmail;

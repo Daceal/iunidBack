@@ -460,6 +460,17 @@ app.post('/getUser', checkToken, (req, res) => {
     });
 });
 
+/**
+ * Method name:
+ *      getUsersByName
+ * 
+ * Received parameters:
+ *      name
+ * 
+ * Search the users by name (company search).
+ * 
+ */
+
 app.post('/getUsersByName', (req, res) => {
     let userName = req.body.name;
 
@@ -484,6 +495,17 @@ app.post('/getUsersByName', (req, res) => {
         });
     })
 });
+
+/**
+ * Method name:
+ *      getUsersByCertificates
+ * 
+ * Received parameters:
+ *      name
+ * 
+ * Search the users by certificates (company search).
+ * 
+ */
 
 app.post('/getUsersByCertificates', checkToken, (req, res) => {
     let certificates = req.body.certificates;
@@ -510,6 +532,17 @@ app.post('/getUsersByCertificates', checkToken, (req, res) => {
     });
 });
 
+/**
+ * Method name:
+ *      getUsersByCertificates
+ * 
+ * Received parameters:
+ *      name
+ * 
+ * Search the users by certificates (company search).
+ * 
+ */
+
 app.post('/getUsersByCourses', checkToken, (req, res) => {
     let courses = req.body.courses;
 
@@ -534,6 +567,17 @@ app.post('/getUsersByCourses', checkToken, (req, res) => {
         });
     });
 });
+
+/**
+ * Method name:
+ *      getUsersBySkills
+ * 
+ * Received parameters:
+ *      name
+ * 
+ * Search the users by skills (company search).
+ * 
+ */
 
 app.post('/getUsersBySkills', checkToken, (req, res) => {
     let skills = req.body.skills;
@@ -608,6 +652,17 @@ app.put('/editUser', checkToken, (req, res) => {
 
 });
 
+/**
+ * Method name:
+ *      editCompany
+ * 
+ * Received parameters:
+ *      body
+ * 
+ * Find the company in the database and update the changes
+ * 
+ */
+
 app.put('/editCompany', checkToken, (req, res) => {
     let body = _.pick(req.body, ['name', 'email', 'img', 'description']);
 
@@ -645,47 +700,17 @@ app.put('/editCompany', checkToken, (req, res) => {
 
 });
 
-app.put('/editPassword', checkToken, (req, res) => {
-    let email = req.body.email;
-    let password = req.body.password;
-
-    User.findOne(email, (err, check) => {
-        if (err) {
-            return res.json({
-                ok: false,
-                err
-            });
-        }
-
-        if (check) {
-            User.findOneAndUpdate(email, { password: bcrypt.hashSync(password, 10) }, (err, passwordChanged) => {
-                if (err) {
-                    return res.json({
-                        ok: false,
-                        err
-                    });
-                }
-                return res.json({
-                    ok: true,
-                    user: passwordChanged
-                });
-            });
-        } else {
-            Company.findOneAndUpdate(email, { password: bcrypt.hashSync(password, 10) }, (err, passwordChanged) => {
-                if (err) {
-                    return res.json({
-                        ok: false,
-                        err
-                    });
-                }
-                return res.json({
-                    ok: true,
-                    company: passwordChanged
-                });
-            });
-        }
-    });
-});
+/**
+ * Method name:
+ *      addScore
+ * 
+ * Received parameters:
+ *      email, projectId, userEmail, score
+ * 
+ * The method find the user or the company by the email, then compare the userEmail
+ * and the projectId, if the condition return false that means he cant vote the user
+ * because he only can vote a user one time per project. 
+ */
 
 app.post('/addScore', checkToken, (req, res) => {
     let email = req.body.email;
@@ -781,6 +806,17 @@ app.post('/addScore', checkToken, (req, res) => {
 
     });
 });
+
+/**
+ * Method name:
+ *      deleteAccount
+ * 
+ * Received parameters:
+ *      emailAccount
+ * 
+ * The method find the user or the company by the email, then change the stateAccount to false
+ * and close all the internal projects that the user have, but only when is not already close.
+ */
 
 app.post('/deleteAccount', checkToken, (req, res) => {
     let emailAccount = req.body.email;
