@@ -34,7 +34,6 @@ app.post('/login', (req, res) => {
     let body = req.body;
 
     User.findOne({ email: body.email }, (err, userDB) => {
-
         if (userDB) {
             if (err) {
                 return res.json({
@@ -76,7 +75,6 @@ app.post('/login', (req, res) => {
             });
 
         } else {
-
             Company.findOne({ email: body.email }, (err, companyDB) => {
                 if (err) {
                     return res.json({
@@ -85,20 +83,20 @@ app.post('/login', (req, res) => {
                     });
                 }
 
-                if (!companyDB.state) {
-                    return res.json({
-                        ok: false,
-                        err: {
-                            message: 'This account dont exists or is inactive'
-                        }
-                    });
-                }
-
                 if (!companyDB) {
                     return res.json({
                         ok: false,
                         err: {
                             message: 'User or password incorrect'
+                        }
+                    });
+                }
+
+                if (!companyDB.state) {
+                    return res.json({
+                        ok: false,
+                        err: {
+                            message: 'This account dont exists or is inactive'
                         }
                     });
                 }

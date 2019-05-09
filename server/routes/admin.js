@@ -1,10 +1,9 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
-const _ = require('underscore');
 const User = require('../models/user');
 const Company = require('../models/company');
 const InternalProject = require('../models/internalProject');
-const ExternalProject = require('../models/externalProject');
+const Admin = require('../models/admin');
 const { checkToken, checkAdmin_Role } = require('../middlewares/authentication');
 const app = express();
 
@@ -138,6 +137,15 @@ app.post('/newUser', [checkToken, checkAdmin_Role], (req, res) => {
 
 app.put('/editUserAdmin', [checkToken, checkAdmin_Role], (req, res) => {
     let body = req.body;
+    let user = {
+        name: body.name,
+        phone: body.phone,
+        description: body.description,
+        img: body.img,
+        skills: body.skills,
+        courses: body.courses,
+        certificates: body.certificates
+    }
 
     User.findOne({ email: body.userEmail }, (err, check) => {
         if (err) {
@@ -148,7 +156,7 @@ app.put('/editUserAdmin', [checkToken, checkAdmin_Role], (req, res) => {
         }
 
         if (check) {
-            User.findOneAndUpdate({ email: userEmail }, body, { new: true, runValidators: true }, (err, userDB) => {
+            User.findOneAndUpdate({ email: body.userEmail }, user, { new: true, runValidators: true }, (err, userDB) => {
                 if (err) {
                     return res.json({
                         ok: false,
@@ -182,6 +190,12 @@ app.put('/editUserAdmin', [checkToken, checkAdmin_Role], (req, res) => {
 
 app.put('/editCompanyAdmin', [checkToken, checkAdmin_Role], (req, res) => {
     let body = req.body;
+    let company = {
+        name: body.name,
+        img: body.img,
+        description: body.description,
+        contactEmail: body.contactEmail
+    }
 
     Company.findOne({ email: body.userEmail }, (err, check) => {
         if (err) {
@@ -192,7 +206,7 @@ app.put('/editCompanyAdmin', [checkToken, checkAdmin_Role], (req, res) => {
         }
 
         if (check) {
-            Company.findOneAndUpdate({ email: userEmail }, body, { new: true, runValidators: true }, (err, companyDB) => {
+            Company.findOneAndUpdate({ email: body.userEmail }, company, { new: true, runValidators: true }, (err, companyDB) => {
                 if (err) {
                     return res.json({
                         ok: false,
