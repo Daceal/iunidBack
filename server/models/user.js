@@ -29,11 +29,11 @@ let userSchema = new Schema({
     },
     score: {
         type: Array,
-        default: [
-            { id: 0 },
-            { userVotedEmail: "" },
-            { userScore: 0 }
-        ]
+        default: [{
+            id: 0,
+            userVotedEmail: "",
+            userScore: 0
+        }]
     },
     password: {
         type: String,

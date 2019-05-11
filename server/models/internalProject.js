@@ -66,11 +66,11 @@ let internalProjectSchema = new Schema({
     },
     users: {
         type: Array,
-        default: [
-            { userEmail: "" },
-            { userOffer: 0 },
-            { userPay: false }
-        ]
+        default: [{
+            userEmail: "",
+            userOffer: 0,
+            userPay: false
+        }]
     },
     category: {
         type: String,
