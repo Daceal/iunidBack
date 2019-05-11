@@ -106,7 +106,8 @@ app.post('/newUser', [checkToken, checkAdmin_Role], (req, res) => {
             });
         });
     } else {
-        let admin = new Admin({
+        let admin = new User({
+            name: 'Admin admin',
             email: body.userEmail,
             password: bcrypt.hashSync(body.password, 10),
             userType: body.newUserType
