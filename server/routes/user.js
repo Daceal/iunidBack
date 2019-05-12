@@ -362,7 +362,7 @@ app.post('/getCompany', checkToken, (req, res) => {
         }
 
         for (var i = 0; i < company.score.length; i++) {
-            sum = sum + parseInt(company.score[i].score);
+            sum = sum + parseInt(company.score[i].userScore);
             cont++;
         }
         average = (sum / cont);
@@ -428,7 +428,7 @@ app.post('/getUser', checkToken, (req, res) => {
         }
 
         for (var i = 0; i < user.score.length; i++) {
-            sum = sum + parseInt(user.score[i].score);
+            sum = sum + parseInt(user.score[i].userScore);
             cont++;
         }
         average = (sum / cont);
@@ -714,12 +714,12 @@ app.post('/addScore', checkToken, (req, res) => {
     let email = req.body.email;
     let projectId = req.body.projectId;
     let userEmail = req.body.userEmail;
-    let score = req.body.score;
+    let userScore = req.body.score;
     let check = true;
     let addScore = {
         projectId: projectId,
         user: email,
-        score: score
+        score: userScore
     }
 
     User.findOne({ email: userEmail }, (err, searchUser) => {

@@ -29,8 +29,12 @@ let companySchema = new Schema({
         required: false
     },
     score: {
-        type: Number,
-        required: false
+        type: Array,
+        default: [{
+            id: 0,
+            userVotedEmail: "",
+            userScore: 0
+        }]
     },
     password: {
         type: String,

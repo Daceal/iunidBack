@@ -229,7 +229,7 @@ app.post('/obtainProjectNameAndId', checkToken, (req, res) => {
 app.post('/obtainAllProjectsThatHeWorks', checkToken, (req, res) => {
     let email = req.body.email;
 
-    InternalProject.find({ users: email }, (err, internalProjects) => {
+    InternalProject.find({ users: { $elemMatch: { userEmail: email } } }, (err, internalProjects) => {
         if (err) {
             return res.json({
                 ok: false,
