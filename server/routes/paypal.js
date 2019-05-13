@@ -16,7 +16,7 @@ app.get('/paypal', (req, res) => {
 app.post('/buy', (req, res) => {
     var amount = req.body.amount;
     var currency = req.body.currency;
-    var email = "alex@alex.com";
+    var email = req.body.email;
     var id = req.body.id;
     var dinero = 5;
     var payment = {
@@ -45,11 +45,11 @@ app.post('/buy', (req, res) => {
             while (counter--) {
                 if (links[counter].method == 'REDIRECT') {
                     //console.log(transaction)
-                    //return res.redirect(links[counter].href)
-                    return res.json({
-                        ok: true,
-                        data: links[counter].href
-                    })
+                    return res.redirect(links[counter].href)
+                        /* return res.json({
+                             ok:true,
+                             data:links[counter].href
+                         })*/
                 }
             }
         })
@@ -61,17 +61,9 @@ app.post('/buy', (req, res) => {
 
 app.get('/success', (req, res) => {
     let email = req.query.email;
-    let userOffer = req.query.dinero;
     let id = req.query.id;
 
-    let pay = true;
-    let user = {
-        userEmail: email,
-        userOffer: userOffer,
-        userPay: pay
-    }
-
-    InternalProject.findOne({ id: id }, (err, changePayState) => {
+    InternalProject.findOne({ _id: id }, (err, changePayState) => {
         if (err) {
             return res.json({
                 ok: false,
@@ -81,7 +73,7 @@ app.get('/success', (req, res) => {
 
         for (let i = 0; i < changePayState.users.length; i++) {
             if (changePayState.users[i].userEmail === email) {
-                InternalProject.findOneAndUpdate({ _id: id }, { $push: { users: user } }, (err, payChanged) => {
+                InternalProject.findOneAndUpdate({ _id: id, "users.userEmail": email }, { $set: { "users.$.userPay": true } }, (err, payChanged) => {
                     if (err) {
                         return res.json({
                             ok: false,
@@ -97,84 +89,7 @@ app.get('/success', (req, res) => {
             }
         }
     });
-    res.redirect('/success.html');
 });
-
-// app.post('/buy', (req, res) => {
-//     var amount = req.body.amount;
-//     var currency = req.body.currency;
-//     var payment = {
-//         "intent": "authorize",
-//         "payer": {
-//             "payment_method": "paypal"
-//         },
-//         "redirect_urls": {
-//             "return_url": "http://127.0.0.1:3000/success",
-//             "cancel_url": "http://127.0.0.1:3000/err"
-//         },
-//         "transactions": [{
-//             "amount": {
-//                 "total": amount,
-//                 "currency": currency
-//             },
-//             "description": " Pago intermedio "
-//         }]
-//     }
-//     createPay(payment)
-//         .then((transaction) => {
-//             var id = transaction.id;
-//             var links = transaction.links;
-//             var counter = links.length;
-//             while (counter--) {
-//                 if (links[counter].method == 'REDIRECT') {
-//                     return res.redirect(links[counter].href)
-//                 }
-//             }
-//         })
-//         .catch((err) => {
-//             console.log(err);
-//             res.redirect('/err');
-//         });
-// });
-
-// // success page 
-// app.get('/success', (req, res) => {
-//     let email = req.body.userEmail;
-//     let userOffer = req.body.userOffer;
-//     let pay = true;
-//     let user = {
-//         userEmail: email,
-//         userOffer: userOffer,
-//         userPay: pay
-//     }
-
-//     InternalProject.findOne({ email: email }, (err, changePayState) => {
-//         if (err) {
-//             return res.json({
-//                 ok: false,
-//                 err
-//             });
-//         }
-
-//         for (let i = 0; i < changePayState.users.length; i++) {
-//             if (changePayState.users[i].userEmail === email) {
-//                 InternalProject.findOneAndUpdate({ email: email }, { users: user }, (err, payChanged) => {
-//                     if (err) {
-//                         return res.json({
-//                             ok: false,
-//                             err
-//                         });
-//                     }
-
-//                     return res.json({
-//                         ok: true,
-//                         project: payChanged
-//                     });
-//                 });
-//             }
-//         }
-//     });
-// });
 
 // error page 
 app.get('/err', (req, res) => {
