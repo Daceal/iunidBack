@@ -3,7 +3,6 @@ const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const Company = require('../models/company');
 const InternalProject = require('../models/internalProject');
-const Admin = require('../models/admin');
 const { checkToken, checkAdmin_Role } = require('../middlewares/authentication');
 const app = express();
 
