@@ -65,12 +65,7 @@ let internalProjectSchema = new Schema({
         required: true
     },
     users: {
-        type: Array,
-        default: [{
-            userEmail: "",
-            userOffer: 0,
-            userPay: false
-        }]
+        type: Array
     },
     category: {
         type: String,

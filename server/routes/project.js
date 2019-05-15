@@ -99,7 +99,6 @@ app.post('/createInternalProject', checkToken, (req, res) => {
     let initialDate = req.body.initialDate;
     let deliveryDate = req.body.deliveryDate;
     let counterOffer = req.body.counterOffer;
-    let users = req.body.users;
     let category = req.body.category;
     let pendingAccepts = req.body.pendingAccepts;
 
@@ -114,7 +113,6 @@ app.post('/createInternalProject', checkToken, (req, res) => {
         initialDate: initialDate,
         deliveryDate: deliveryDate,
         counterOffer: counterOffer,
-        users: users,
         category: category,
         pendingAccepts: pendingAccepts
     });
@@ -599,12 +597,32 @@ app.post('/addingCounterOffer', checkToken, (req, res) => {
             });
         }
 
+        if (checkOffer.userOwner === email) {
+            return res.json({
+                ok: false,
+                err: {
+                    message: 'You can´t send a counter offer if you are the owner of the project'
+                }
+            });
+        }
+
         for (let i = 0; i < checkOffer.users.length; i++) {
-            if (checkOffer.users[i].userEmail === userEmail) {
+            if (checkOffer.users[i].userEmail === email) {
                 return res.json({
                     ok: false,
                     err: {
-                        message: 'You are already in the project'
+                        message: 'You can´t send a counter offer because you are in the project'
+                    }
+                });
+            }
+        }
+
+        for (let j = 0; j < checkOffer.pendingAccepts.length; j++) {
+            if (checkOffer.pendingAccepts[j] === email) {
+                return res.json({
+                    ok: false,
+                    err: {
+                        message: 'You can´t send a counter offer because you are pending to be accepted'
                     }
                 });
             }
