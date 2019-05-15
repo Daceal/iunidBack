@@ -617,8 +617,8 @@ app.post('/addingCounterOffer', checkToken, (req, res) => {
             }
         }
 
-        for (let j = 0; j < checkOffer.pendingAccepts.length; j++) {
-            if (checkOffer.pendingAccepts[j] === email) {
+        for (let j = 0; j < checkOffer.pendingCounterOffer.length; j++) {
+            if (checkOffer.pendingCounterOffer[j].user === email) {
                 return res.json({
                     ok: false,
                     err: {
