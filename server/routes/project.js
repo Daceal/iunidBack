@@ -582,10 +582,10 @@ app.post('/kickPerson', checkToken, (req, res) => {
 
 app.post('/addingCounterOffer', checkToken, (req, res) => {
     let projectId = req.body.id;
-    let userEmail = req.body.email;
+    let email = req.body.email;
     let price = req.body.price;
     let counterOffer = {
-        user: userEmail,
+        user: email,
         offer: price
     };
 
