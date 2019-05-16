@@ -44,12 +44,10 @@ app.post('/buy', (req, res) => {
             var counter = links.length;
             while (counter--) {
                 if (links[counter].method == 'REDIRECT') {
-                    //console.log(transaction)
-                    return res.redirect(links[counter].href)
-                        /* return res.json({
-                             ok:true,
-                             data:links[counter].href
-                         })*/
+                    return res.json({
+                        ok: true,
+                        data: links[counter].href
+                    });
                 }
             }
         })
