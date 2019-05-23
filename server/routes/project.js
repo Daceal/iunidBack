@@ -257,7 +257,7 @@ app.post('/obtainAllProjectsThatHeWorks', checkToken, (req, res) => {
  * Received parameters:
  *      name
  * 
- * The method find and return all the projects with the name received
+ * The method find and return all the projects by the name
  * 
  */
 

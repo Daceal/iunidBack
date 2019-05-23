@@ -54,14 +54,13 @@ let userSchema = new Schema({
     img: {
         type: String
     },
-    google: {
-        type: Boolean,
-        default: false
-    },
     userType: {
         type: String,
         default: 'USER_ROLE',
         enum: validRoles
+    },
+    pendingMessages: {
+        type: Array
     }
 
 });

@@ -805,6 +805,67 @@ app.post('/addScore', checkToken, (req, res) => {
     });
 });
 
+app.post('/sendMessageCollaborator', (req, res) => {
+    let projectId = req.body.id;
+    let userEmail = req.body.userEmail;
+
+    InternalProject.findById(projectId, (err, project) => {
+        if (err) {
+            return res.json({
+                ok: false,
+                err
+            });
+        }
+
+        let messageProject = {
+            "ProjectId": project._id,
+            "ProjectName": project.name
+        };
+
+        User.findOneAndUpdate({ email: userEmail }, { $push: { pendingMessages: messageProject } }, (err, userDB) => {
+            if (err) {
+                return res.json({
+                    ok: false,
+                    err
+                });
+            }
+
+            InternalProject.findByIdAndUpdate(projectId, { $push: { pendingAccepts: userEmail } }, (err, updateUser) => {
+                if (err) {
+                    return res.json({
+                        ok: false,
+                        err
+                    });
+                }
+
+                return res.json({
+                    ok: true,
+                    userDB,
+                    updateUser
+                });
+            });
+        });
+    });
+});
+
+app.post('/showMessagesCollaborator', (req, res) => {
+    let userEmail = req.body.email;
+
+    User.findOne({ email: userEmail }, 'pendingMessages', (err, messages) => {
+        if (err) {
+            return res.json({
+                ok: false,
+                err
+            });
+        }
+
+        return res.json({
+            ok: true,
+            messages
+        });
+    });
+});
+
 /**
  * Method name:
  *      deleteAccount
