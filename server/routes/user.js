@@ -818,7 +818,7 @@ app.post('/sendMessageCollaborator', (req, res) => {
         }
 
         let messageProject = {
-            "ProjectId": project._id,
+            "ProjectId": projectId,
             "ProjectName": project.name
         };
 
@@ -862,6 +862,89 @@ app.post('/showMessagesCollaborator', (req, res) => {
         return res.json({
             ok: true,
             messages
+        });
+    });
+});
+
+/**
+ * Method name:
+ *      acceptPendingRequestCollaborator
+ * 
+ * Received parameters:
+ *      projectId, userEmail
+ * 
+ * Find the project by id and change the user email from pendingAccepts to users, then remove the message from the user. 
+ */
+
+app.post('/acceptPendingRequestCollaborator', (req, res) => {
+    let projectId = req.body.id;
+    let userEmail = req.body.email;
+    let user = {
+        userEmail: userEmail,
+        userOffer: 0,
+        userPay: false
+    };
+
+    InternalProject.findByIdAndUpdate(projectId, { $push: { users: user }, $pull: { pendingAccepts: userEmail } }, (err, acceptRequest) => {
+        if (err) {
+            return res.json({
+                ok: false,
+                err
+            });
+        }
+
+        User.findOneAndUpdate({ email: userEmail }, { $pull: { pendingMessages: { ProjectId: projectId } } }, (err, eliminateMessage) => {
+            if (err) {
+                return res.json({
+                    ok: false,
+                    err
+                });
+            }
+
+            return res.json({
+                ok: true,
+                project: acceptRequest,
+                user: eliminateMessage
+            });
+        });
+    });
+});
+
+/**
+ * Method name:
+ *      denyPendingRequestCollaborator
+ * 
+ * Received parameters:
+ *      projectId, userEmail
+ * 
+ * Find the project by id and remove the user from pendingAccepts then remove the message from the user. 
+ */
+
+app.post('/denyPendingRequestCollaborator', checkToken, (req, res) => {
+    let projectId = req.body.id;
+    let userEmail = req.body.email;
+
+    InternalProject.findByIdAndUpdate(projectId, { $pull: { pendingAccepts: userEmail } }, (err, denyRequest) => {
+        if (err) {
+            return res.json({
+                ok: false,
+                err
+            });
+        }
+
+        User.findOneAndUpdate({ email: userEmail }, { $pull: { pendingMessages: { ProjectId: projectId } } }, (err, eliminateMessage) => {
+            if (err) {
+                return res.json({
+                    ok: false,
+                    err
+                });
+            }
+
+            return res.json({
+                ok: true,
+                project: denyRequest,
+                user: eliminateMessage
+            });
         });
     });
 });
