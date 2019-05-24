@@ -3,15 +3,15 @@ const app = express();
 const ChatConversation = require('../models/chatConversation');
 const path = require('path');
 
-app.get('/chat', function(req, res){
-    res.redirect('/chat.html'); 
+app.get('/chat', function(req, res) {
+    res.redirect('/chat.html');
 });
 
-app.get('/chat2', function(req, res){
-    res.redirect('/chat2.html'); 
+app.get('/chat2', function(req, res) {
+    res.redirect('/chat2.html');
 });
 
-app.get('/private', function(req,res){
+app.get('/private', function(req, res) {
     res.redirect('/privateRoom.html')
 });
 
@@ -57,7 +57,7 @@ app.post('/createConversation', (req, res) => {
 
 app.post("/download", (req, res) => {
     var filePath = path.join(__dirname, '../sockets/uploads/');
-    var ruta = filePath+req.body.filename;
+    var ruta = filePath + req.body.filename;
     res.sendFile(ruta);
 });
 
@@ -65,7 +65,7 @@ app.post("/download", (req, res) => {
 app.post("/getDeliveriesById", (req, res) => {
     let id = req.body.id;
     console.log("ID:" + id);
-    ChatConversation.findById(id, function (err, conversationDB) {
+    ChatConversation.findById(id, function(err, conversationDB) {
         if (err) {
             console.log("La conversacion no existe")
             return false;
@@ -75,20 +75,20 @@ app.post("/getDeliveriesById", (req, res) => {
         res.json({
             deliveries
         });
-      
-    });   
+
+    });
 });
 
 
 app.post('/getConversationById', (req, res) => {
     let id = req.body.id;
 
-    ChatConversation.findById(id, function (err, conversationDB) {
+    ChatConversation.findById(id, function(err, conversationDB) {
         if (err) {
             console.log("Error al buscar conversacion")
             return false;
         }
-    
+
         if (!conversationDB) {
             console.log("La conversacion no existe")
             return false;
