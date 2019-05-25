@@ -56,10 +56,6 @@ let internalProjectSchema = new Schema({
         type: Date,
         required: true
     },
-    delivery: {
-        type: Array,
-        default: []
-    },
     userOwner: {
         type: String,
         required: true
@@ -79,6 +75,10 @@ let internalProjectSchema = new Schema({
     pendingCounterOffer: {
         type: Array,
         default: []
+    },
+    idConversation: {
+        type: String,
+        required: false
     }
 });
 

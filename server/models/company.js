@@ -53,10 +53,6 @@ let companySchema = new Schema({
         type: String,
         required: true,
         unique: true
-    },
-    contacts: {
-        type: Array,
-        default: {}
     }
 
 });

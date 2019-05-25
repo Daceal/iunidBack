@@ -1211,4 +1211,25 @@ app.post('/deleteAccount', checkToken, (req, res) => {
     });
 });
 
+app.get('/img/:type/:rute', (req, res, next) => {
+
+    var rute = req.params.rute;
+    var type = req.params.type;
+    var path = `./uploads/${ rute }`;
+
+    fs.exists(path, exist => {
+        if (!exist) {
+
+            if (type === 'user') {
+                path = './uploads/images/user-avatar.svg';
+            } else {
+                path = './uploads/images/company-avatar.svg';
+            }
+        }
+
+        res.sendfile(path);
+
+    });
+});
+
 module.exports = app;

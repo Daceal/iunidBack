@@ -2,6 +2,7 @@ const express = require('express');
 const InternalProject = require('../models/internalProject');
 const ExternalProject = require('../models/externalProject');
 const { checkToken, checkAdmin_Role } = require('../middlewares/authentication');
+const ChatConversation = require('../models/chatConversation');
 const app = express();
 
 
@@ -102,7 +103,7 @@ app.post('/externalProjects', checkToken, (req, res) => {
  * 
  */
 
-app.post('/createInternalProject', checkToken, (req, res) => {
+app.post('/createInternalProject', (req, res) => {
     let email = req.body.email;
     let name = req.body.name;
     let description = req.body.description;
@@ -116,22 +117,20 @@ app.post('/createInternalProject', checkToken, (req, res) => {
     let category = req.body.category;
     let pendingAccepts = req.body.pendingAccepts;
 
-    let internalProject = new InternalProject({
-        userOwner: email,
-        name: name,
-        description: description,
-        tags: tags,
-        files: files,
-        minPrice: minPrice,
-        maxPrice: maxPrice,
-        initialDate: initialDate,
-        deliveryDate: deliveryDate,
-        counterOffer: counterOffer,
-        category: category,
-        pendingAccepts: pendingAccepts
+    // Creamos objeto conversacion
+    let owner = email;
+    let members = owner;
+    let state = true;
+
+    let conversation = new ChatConversation({
+        owner: owner,
+        members: members,
+        state: state
     });
 
-    internalProject.save((err, internalDB) => {
+    let idconver = "";
+    // Creamos la conversacion
+    conversation.save((err, conversationDB) => {
         if (err) {
             return res.json({
                 ok: false,
@@ -139,9 +138,36 @@ app.post('/createInternalProject', checkToken, (req, res) => {
             });
         }
 
-        return res.json({
-            ok: true,
-            internalProject: internalDB
+        idconver = conversationDB._id;
+
+        let internalProject = new InternalProject({
+            userOwner: email,
+            name: name,
+            description: description,
+            tags: tags,
+            files: files,
+            minPrice: minPrice,
+            maxPrice: maxPrice,
+            initialDate: initialDate,
+            deliveryDate: deliveryDate,
+            counterOffer: counterOffer,
+            category: category,
+            pendingAccepts: pendingAccepts,
+            idConversation: idconver
+        });
+
+        internalProject.save((err, internalDB) => {
+            if (err) {
+                return res.json({
+                    ok: false,
+                    err
+                });
+            }
+
+            return res.json({
+                ok: true,
+                internalProject: internalDB
+            });
         });
     });
 });
