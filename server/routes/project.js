@@ -626,7 +626,7 @@ app.post('/kickPerson', checkToken, (req, res) => {
     let projectId = req.body.id;
     let userEmail = req.body.userEmail;
 
-    InternalProject.findByIdAndUpdate(projectId, { $pull: { users: { userEmail: userEmail } } }, (err, userKicked) => {
+    InternalProject.findByIdAndUpdate(projectId, { $pull: { users: userEmail } }, (err, userKicked) => {
         if (err) {
             return res.json({
                 ok: false,
