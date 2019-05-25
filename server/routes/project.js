@@ -15,6 +15,11 @@ const app = express();
  * The method set the parameters in a externalProject object and save them
  * in the ExternalProject table.
  * 
+ * ==========================================================================
+ * 
+ * El método setea los parametros en un objeto de externalProject y los guarda
+ * en la tabla de ExternalProject.
+ * 
  */
 
 app.post('/createExternalProject', checkToken, (req, res) => {
@@ -52,7 +57,11 @@ app.post('/createExternalProject', checkToken, (req, res) => {
  * Received parameters:
  *      email, name, description, url
  * 
- * The method find and obtain all the external projects by the email received
+ * The method find and obtain all the external projects by the email received.
+ * 
+ * ==========================================================================
+ * 
+ * El método encuentra y obtiene todos los proyectos externos por el email.
  * 
  */
 
@@ -85,6 +94,11 @@ app.post('/externalProjects', checkToken, (req, res) => {
  * 
  * The method set the parameters in a internalProject object and save them
  * in the InternalProject table.
+ * 
+ * ==========================================================================
+ * 
+ * El método setea los parametros en un objeto de internalProject y los guarda
+ * en la tabla de InternalProject.
  * 
  */
 
@@ -142,6 +156,11 @@ app.post('/createInternalProject', checkToken, (req, res) => {
  * The method find the email in the internal project table and obtain all the projects
  * where the userOwner is the same email.
  * 
+ * ====================================================================================
+ * 
+ * El método encuentra el email del usuario en la tabla de proyectos internos y devuelve 
+ * todos los proyectos internos en el que el userOwner es el mismo email.
+ * 
  */
 
 app.post('/obtainAllProjects', checkToken, (req, res) => {
@@ -180,8 +199,13 @@ app.post('/obtainAllProjects', checkToken, (req, res) => {
  * Returned parameters:
  *      id and name
  * 
- * Find the user owner of the internal project and return the id and name of the project
- * using the email
+ * Find the userOwner of the internal project and returns the id and name of the project
+ * using the email.
+ * 
+ * ======================================================================================
+ * 
+ * Encuentra el userOwner de un proyecto interno y devuelve el id y el nombre del proyecto
+ * usando el email.
  * 
  */
 
@@ -219,8 +243,13 @@ app.post('/obtainProjectNameAndId', checkToken, (req, res) => {
  * Received parameters:
  *      email
  * 
- * The method find and return all the projects that the user is working
+ * The method find and returns all the projects that the user is working
  * in this moment using the email
+ * 
+ * =======================================================================
+ * 
+ * El método encuentra y devuelve todos los proyectos en el que el usuario
+ * está trabajando en ese momento a través de su email.
  * 
  */
 
@@ -257,7 +286,11 @@ app.post('/obtainAllProjectsThatHeWorks', checkToken, (req, res) => {
  * Received parameters:
  *      name
  * 
- * The method find and return all the projects by the name
+ * The method find and returns all the projects by the name.
+ * 
+ * =======================================================================
+ * 
+ * El método encuentra y devuelve todos los proyectos por su nombre.
  * 
  */
 
@@ -293,7 +326,11 @@ app.post('/obtainProjectName', checkToken, (req, res) => {
  * Received parameters:
  *      category
  * 
- * The method find and return all the projects with the category received
+ * The method find and returns all the projects with the category received.
+ * 
+ * =======================================================================
+ * 
+ * El método encuentra y devuelve todos los proyectos por categoria.
  * 
  */
 
@@ -329,7 +366,11 @@ app.post('/obtainProjectCategory', checkToken, (req, res) => {
  * Received parameters:
  *      tags
  * 
- * The method find and return all the projects with the tags received
+ * The method find and returns all the projects with the tags received.
+ * 
+ * =======================================================================
+ * 
+ * El método encuentra y devuelve todos los proyectos por tags.
  * 
  */
 
@@ -365,7 +406,11 @@ app.post('/obtainProjectTags', checkToken, (req, res) => {
  * Received parameters:
  *      minPrice, maxPrice
  * 
- * The method find and return all projects between the min price and max price received
+ * The method find and returns all projects between the min price and max price received.
+ * 
+ * ======================================================================================
+ * 
+ * El método encuentra y devuelve todos los proyectos entre un mínimo precio y uno máximo.
  * 
  */
 
@@ -405,14 +450,28 @@ app.post('/obtainProjectPrice', checkToken, (req, res) => {
  * The method find the email in the userOwner row, if it´s true thats mean the user is
  * the owner of the project so the request is not sent. 
  * 
- * Then find it in the users row, if it´s true that means the user is working on the 
+ * Then search it in the users row, if it´s true that means the user is working on the 
  * project so the request is not sent.
  * 
- * After that compare if the user is in the pendingAccepts row, if it´s true that means
+ * After that compare if the user email is in the pendingAccepts row, if it´s true that means
  * the user is already pending to accept.
  * 
  * Finally, if all the previous checks are false, the pending accept is send and the user
  * is introduce in the pendingAccepts column.
+ * 
+ * ======================================================================================
+ * 
+ * El método encuentra el email del usuario en la columna userOwner, si devuelve true
+ * significa que el usuario el el propietario del proyecto y la petición no es enviada.
+ * 
+ * Después busca el email en la columna de users, , si lo encuentra significa que el
+ * usuario ya esta en el proyecto por lo que no se le manda petición.
+ * 
+ * A continuación compara si el email del usuario está en la columna de pendingAccepts,
+ * si es así significa que el usuario está pendiente de ser aceptado.
+ * 
+ * Finalmente, si todas las comprobaciones son falsas se envia la petición y se almacena
+ * al usuario en la columna de pendingAccepts.
  * 
  */
 
@@ -482,7 +541,12 @@ app.put('/addingPendingRequest', checkToken, (req, res) => {
  * Received parameters:
  *      projectId, userEmail
  * 
- * Find the project by id and change the user email from pendingAccepts to users. 
+ * Find the project by id and change the user from pendingAccepts to users.
+ * 
+ * ======================================================================================
+ * 
+ * Encuentra el proyecto por id y cambia al usuario de pendingAccepts a users.
+ *  
  */
 
 app.post('/acceptPendingRequest', checkToken, (req, res) => {
@@ -516,7 +580,12 @@ app.post('/acceptPendingRequest', checkToken, (req, res) => {
  * Received parameters:
  *      projectId, userEmail
  * 
- * Find the project by id and remove the user from pendingAccepts. 
+ * Find the project by id and remove the user from pendingAccepts.
+ * 
+ * =====================================================================
+ * 
+ * Encuentra el proyecto por id y elimina al usuario de pendingAccepts.
+ * 
  */
 
 app.post('/denyPendingRequest', checkToken, (req, res) => {
@@ -545,14 +614,19 @@ app.post('/denyPendingRequest', checkToken, (req, res) => {
  * Received parameters:
  *      projectId, userEmail
  * 
- * Find the project by id and remove the user from the project. 
+ * Find the project by id and remove the user from the project.
+ * 
+ * =====================================================================
+ * 
+ * Encuentra el proyecto por id y elimina al usuario del proyecto.
+ * 
  */
 
 app.post('/kickPerson', checkToken, (req, res) => {
     let projectId = req.body.id;
     let userEmail = req.body.userEmail;
 
-    InternalProject.findByIdAndUpdate(projectId, { $pull: { users: userEmail } }, (err, userKicked) => {
+    InternalProject.findByIdAndUpdate(projectId, { $pull: { users: { userEmail: userEmail } } }, (err, userKicked) => {
         if (err) {
             return res.json({
                 ok: false,
@@ -572,12 +646,26 @@ app.post('/kickPerson', checkToken, (req, res) => {
  *      addingCounterOffer
  * 
  * Received parameters:
- *      projectId, userEmail, price
+ *      projectId, email, price
  * 
- * Find the project by id, then search the userEmail, if exists the user
- * is in the project so don´t need to be added.
+ * Find the project by id, then search the user email in the userOwner row,
+ * if it's a match the counter offer is not added.
  * 
- * Finally add the counter offer in the pendingCounterOffer. 
+ * If the email is find in the users or pendingCounterOffer rows the counter
+ * offer is not added too.
+ * 
+ * Finally add the counter offer in pendingCounterOffer.
+ * 
+ * ===========================================================================
+ * 
+ * Encuentra el proyecto por id y busca el email del usuario, si lo encuentra
+ * en la fila de userOwner no se le añade la contra oferta.
+ * 
+ * Si encuentra el email en la fila de users o de pendingCounterOffer tampoco
+ * se le añade la contra oferta
+ * 
+ * Finalmente añade la contra oferta en pendingCounterOffer
+ * 
  */
 
 app.post('/addingCounterOffer', checkToken, (req, res) => {
@@ -651,7 +739,12 @@ app.post('/addingCounterOffer', checkToken, (req, res) => {
  * Received parameters:
  *      projectId, userEmail, price
  * 
- * Find the project by id and change the counter offer in pendingCounterOffer to users
+ * Find the project by id and change the counter offer in pendingCounterOffer to users.
+ * 
+ * ======================================================================================
+ * 
+ * Encuentra el proyecto por id y cambia la contra oferta de pendingCounterOffer a users.
+ * 
  */
 
 app.post('/acceptCounterOffer', checkToken, (req, res) => {
@@ -690,7 +783,12 @@ app.post('/acceptCounterOffer', checkToken, (req, res) => {
  * Received parameters:
  *      projectId, userEmail, price
  * 
- * Find the project by id and remove the counter offer from pendingCounterOffer
+ * Find the project by id and remove the counter offer from pendingCounterOffer.
+ * 
+ * ======================================================================================
+ * 
+ * Encuentra el proyecto por id y elimina la contra oferta de pendingCounterOffer.
+ * 
  */
 
 app.post('/denyCounterOffer', checkToken, (req, res) => {
@@ -725,7 +823,12 @@ app.post('/denyCounterOffer', checkToken, (req, res) => {
  * Received parameters:
  *      projectId
  * 
- * Find the project by id and change the state to close. 
+ * Find the project by id and change the state to close.
+ * 
+ * ==========================================================
+ * 
+ * Encuentra el proyecto por id y cambia el estado a cerrado.
+ * 
  */
 
 app.post('/closeProject', checkToken, (req, res) => {
@@ -754,7 +857,11 @@ app.post('/closeProject', checkToken, (req, res) => {
  * Received parameters:
  *      projectId, body
  * 
- * The method find a internal project by id and update the changes
+ * The method find a internal project by id and update the changes.
+ * 
+ * ====================================================================
+ * 
+ * El método encuentra un proyecto interno por id y guarda los cambios.
  * 
  */
 
@@ -784,7 +891,11 @@ app.put('/editInternalProject', checkToken, (req, res) => {
  * Received parameters:
  *      projectId, body
  * 
- * The method find a external project by id and update the changes
+ * The method find a external project by id and update the changes.
+ * 
+ * ====================================================================
+ * 
+ * El método encuentra un proyecto externo por id y guarda los cambios.
  * 
  */
 
@@ -814,7 +925,11 @@ app.put('/editExternalProject', checkToken, (req, res) => {
  * Received parameters:
  *      projectId
  * 
- * The method find a external project by id and delete it
+ * The method find a external project by id and delete it.
+ * 
+ * ====================================================================
+ * 
+ * El método encuentra un proyecto externo por ud y lo borra.
  * 
  */
 
@@ -843,7 +958,11 @@ app.post('/deleteInternalProject', checkToken, (req, res) => {
  * Received parameters:
  *      projectId
  * 
- * The method find a external project by id and delete it
+ * The method find a external project by id and delete it.
+ * 
+ * ====================================================================
+ * 
+ * El método encuentra un proyecto externo por id y lo borra.
  * 
  */
 

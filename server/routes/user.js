@@ -24,9 +24,22 @@ const app = express();
  * Then compare the state of the account, if it´s false automatically stops the method and return a false
  * because that´s mean the account is inactive.
  * 
- * After that it is compared the received password is the same that the user in the table
+ * If the previous comparation returns true, it compares the received password with the user or company password
  * 
  * Finally the method create a token for that user session.
+ * 
+ * ===============================================================================================
+ * 
+ * Este metodo logea a un usuario o compañia de la siguiente manera:
+ * 
+ * El método compara si el email recibido esta en la alguna de las tablas.
+ * 
+ * Después compara el estado de la cuenta, si es falso automáticamente se sale y devuelve falso
+ * porque indica que la cuenta se encuentra inactiva.
+ * 
+ * Si es estado devuelve true compara la contraseña recibida con la de el usuario o compañia.
+ * 
+ * Finalmente el metodo crea un token para la sesión de ese usuario.
  * 
  */
 
@@ -143,6 +156,15 @@ app.post('/login', (req, res) => {
  * 
  * Finally the user is saved in the database.
  * 
+ * ============================================================================================
+ * 
+ * El método encuentra el email pasado y busca coincidencias en las tablas de usuario y compañia
+ * porque el email debe ser único.
+ * 
+ * Si no existe ese email el método crea al usuario y encripta su contraseña.
+ * 
+ * Finalmente el usuario se guarda en la base de datos.
+ * 
  */
 
 app.post('/registerUser', (req, res) => {
@@ -223,6 +245,15 @@ app.post('/registerUser', (req, res) => {
  * 
  * Finally the company is saved in the database.
  * 
+ * ============================================================================================
+ * 
+ * El método encuentra el email pasado y busca coincidencias en las tablas de usuario y compañia
+ * porque el email debe ser único.
+ * 
+ * Si no existe ese email el método crea a la empresa y encripta su contraseña.
+ * 
+ * Finalmente la empresa se guarda en la base de datos.
+ * 
  */
 
 app.post('/registerCompany', (req, res) => {
@@ -298,6 +329,10 @@ app.post('/registerCompany', (req, res) => {
  * 
  * Search all the contacts of a company by the email.
  * 
+ * ==================================================================
+ * 
+ * Busca todos los contactos de una compañia por su email.
+ * 
  */
 
 app.post('/obtainContacts', checkToken, (req, res) => {
@@ -336,7 +371,11 @@ app.post('/obtainContacts', checkToken, (req, res) => {
  * Returned parameters:
  *      name, email, contactEmail, description, score, img, contacts and external projects
  * 
- * Search the company by email and returned the elements necessaries for the profile.
+ * Search the company by email and returns the elements necessaries for the profile.
+ * 
+ * =======================================================================================
+ * 
+ * Busca la compañia por email y devuelve los elementos necesarios para su perfil.
  * 
  */
 
@@ -404,6 +443,10 @@ app.post('/getCompany', checkToken, (req, res) => {
  * 
  * Search the user by email and returned the elements necessaries for the profile.
  * 
+ * =======================================================================================
+ * 
+ * Busca al usuario por email y devuelve los elementos necesarios para su perfil.
+ * 
  */
 
 app.post('/getUser', checkToken, (req, res) => {
@@ -467,6 +510,10 @@ app.post('/getUser', checkToken, (req, res) => {
  * 
  * Search the users by name (company search).
  * 
+ * ==================================================
+ * 
+ * Busca a los usuarios por su nombre (Busqueda de una compañia).
+ * 
  */
 
 app.post('/getUsersByName', (req, res) => {
@@ -503,6 +550,10 @@ app.post('/getUsersByName', (req, res) => {
  * 
  * Search the users by certificates (company search).
  * 
+ * ==================================================
+ * 
+ * Busca a los usuarios por sus certificados (Busqueda de una compañia).
+ * 
  */
 
 app.post('/getUsersByCertificates', checkToken, (req, res) => {
@@ -532,12 +583,16 @@ app.post('/getUsersByCertificates', checkToken, (req, res) => {
 
 /**
  * Method name:
- *      getUsersByCertificates
+ *      getUsersByCourses
  * 
  * Received parameters:
  *      name
  * 
- * Search the users by certificates (company search).
+ * Search the users by courses (company search).
+ * 
+ * ==================================================
+ * 
+ * Busca a los usuarios por sus cursos (Busqueda de una compañia).
  * 
  */
 
@@ -575,6 +630,10 @@ app.post('/getUsersByCourses', checkToken, (req, res) => {
  * 
  * Search the users by skills (company search).
  * 
+ * ==================================================
+ * 
+ * Busca a los usuarios por sus habilidades (Busqueda de una compañia).
+ * 
  */
 
 app.post('/getUsersBySkills', checkToken, (req, res) => {
@@ -609,7 +668,11 @@ app.post('/getUsersBySkills', checkToken, (req, res) => {
  * Received parameters:
  *      body
  * 
- * Find the user in the database and update the changes
+ * Find the user in the database and update the changes.
+ * 
+ * ==================================================
+ * 
+ * Encuentra al usuario en la base de datos y guarda los cambios.
  * 
  */
 
@@ -659,6 +722,10 @@ app.put('/editUser', checkToken, (req, res) => {
  * 
  * Find the company in the database and update the changes
  * 
+ * ==================================================
+ * 
+ * Encuentra a la compañia en la base de datos y guarda los cambios.
+ * 
  */
 
 app.put('/editCompany', checkToken, (req, res) => {
@@ -706,8 +773,15 @@ app.put('/editCompany', checkToken, (req, res) => {
  *      email, projectId, userEmail, score
  * 
  * The method find the user or the company by the email, then compare the userEmail
- * and the projectId, if the condition return false that means he cant vote the user
- * because he only can vote a user one time per project. 
+ * and the projectId, if the condition returns false that means he cant vote the user
+ * because he only can vote a user one time per project.
+ * 
+ * ====================================================================================
+ * 
+ * El método encuentra al usuario o compañia por su email y compara el userEmail y el
+ * projectId, si la condición devuelve falso significa que ese usuario no puede votar
+ * a otro usuario porque ya lo hizo y solo está permitido una vez por proyecto.
+ * 
  */
 
 app.post('/addScore', checkToken, (req, res) => {
@@ -805,6 +879,23 @@ app.post('/addScore', checkToken, (req, res) => {
     });
 });
 
+/**
+ * Method name:
+ *      sendMessageCollaborator
+ * 
+ * Received parameters:
+ *      projectId, userEmail
+ * 
+ * The method search a internal project by id and fill a variable with his id and name,
+ * then search the user by the email and add a message to the user.
+ * 
+ * ====================================================================================
+ * 
+ * El método busca un proyecto interno por su id y almacena en una variable su id
+ * y su nombre, después busca al usuario por su email y le añade un mensaje al usuario.
+ * 
+ */
+
 app.post('/sendMessageCollaborator', (req, res) => {
     let projectId = req.body.id;
     let userEmail = req.body.userEmail;
@@ -848,6 +939,21 @@ app.post('/sendMessageCollaborator', (req, res) => {
     });
 });
 
+/**
+ * Method name:
+ *      showMessagesCollaborator
+ * 
+ * Received parameters:
+ *      userEmail
+ * 
+ * The method shows all the pending messages that he has.
+ * 
+ * ====================================================================================
+ * 
+ * El método muestra todos los mensajes pendientes que tiene ese usuario.
+ * 
+ */
+
 app.post('/showMessagesCollaborator', (req, res) => {
     let userEmail = req.body.email;
 
@@ -874,6 +980,11 @@ app.post('/showMessagesCollaborator', (req, res) => {
  *      projectId, userEmail
  * 
  * Find the project by id and change the user email from pendingAccepts to users, then remove the message from the user. 
+ * 
+ * ==========================================================================================================================
+ * 
+ * Encuentra el proyecto por su id y cambia el email del usuario de pendingAccepts a users, y elimina el mensaje al usuario.
+ * 
  */
 
 app.post('/acceptPendingRequestCollaborator', (req, res) => {
@@ -918,6 +1029,11 @@ app.post('/acceptPendingRequestCollaborator', (req, res) => {
  *      projectId, userEmail
  * 
  * Find the project by id and remove the user from pendingAccepts then remove the message from the user. 
+ * 
+ * ==========================================================================================================================
+ * 
+ * Encuentra el proyecto por id y elimina al usuario de pendingAccepts, después elimina el mensaje al usuario.
+ * 
  */
 
 app.post('/denyPendingRequestCollaborator', checkToken, (req, res) => {
@@ -958,6 +1074,12 @@ app.post('/denyPendingRequestCollaborator', checkToken, (req, res) => {
  * 
  * The method find the user or the company by the email, then change the stateAccount to false
  * and close all the internal projects that the user have, but only when is not already close.
+ * 
+ * ==========================================================================================================================
+ * 
+ * El metodo encuentra al usuario o compañia por el email, cambia el estado de la cuenta a false
+ * y cierra todos los proyectos internos que ese usuario tiene, pero solo si no estan cerrados.
+ * 
  */
 
 app.post('/deleteAccount', checkToken, (req, res) => {
@@ -974,7 +1096,7 @@ app.post('/deleteAccount', checkToken, (req, res) => {
         }
 
         if (deletedUser) {
-            InternalProject.countDocuments({ userOwner: emailAccount, state: { $ne: "Close" } }, (err, count) => {
+            InternalProject.countDocuments({ userOwner: emailAccount, state: { $ne: stateProject } }, (err, count) => {
                 if (err) {
                     return res.json({
                         ok: false,
@@ -990,7 +1112,7 @@ app.post('/deleteAccount', checkToken, (req, res) => {
                     });
                 } else {
                     for (let i = 1; i <= count; i++) {
-                        InternalProject.findOneAndUpdate({ userOwner: emailAccount, state: { $ne: "Close" } }, { state: stateProject }, (err, totalProjects) => {
+                        InternalProject.findOneAndUpdate({ userOwner: emailAccount, state: { $ne: stateProject } }, { state: stateProject }, (err, totalProjects) => {
                             if (err) {
                                 return res.json({
                                     ok: false,
@@ -1017,7 +1139,7 @@ app.post('/deleteAccount', checkToken, (req, res) => {
                     });
                 }
 
-                InternalProject.countDocuments({ userOwner: emailAccount, state: { $ne: "Close" } }, (err, count) => {
+                InternalProject.countDocuments({ userOwner: emailAccount, state: { $ne: stateProject } }, (err, count) => {
                     if (err) {
                         return res.json({
                             ok: false,
@@ -1033,7 +1155,7 @@ app.post('/deleteAccount', checkToken, (req, res) => {
                         });
                     } else {
                         for (let j = 1; j <= count; j++) {
-                            InternalProject.findOneAndUpdate({ userOwner: emailAccount, state: { $ne: "Close" } }, { state: stateProject }, (err, totalProjects) => {
+                            InternalProject.findOneAndUpdate({ userOwner: emailAccount, state: { $ne: stateProject } }, { state: stateProject }, (err, totalProjects) => {
                                 if (err) {
                                     return res.json({
                                         ok: false,

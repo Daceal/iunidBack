@@ -11,6 +11,11 @@ const app = express();
  *      getUsers
  * 
  * The method find all the users in iUnid.
+ * 
+ * ================================================
+ * 
+ * El método encuentra todos los usuarios de iUnid.
+ * 
  */
 
 app.post('/getUsers', [checkToken, checkAdmin_Role], (req, res) => {
@@ -43,7 +48,12 @@ app.post('/getUsers', [checkToken, checkAdmin_Role], (req, res) => {
  * Method name:
  *      newUser
  * 
- * The method create a new user depending of the userType: admin, editor, company or user.
+ * The method create a new user depending of the userType: admin, company or user.
+ * 
+ * =======================================================================================
+ * 
+ * El método crea un nuevo usuario dependiendo de su tipo (rol): admin, compañia o usuario.
+ * 
  */
 
 app.post('/newUser', [checkToken, checkAdmin_Role], (req, res) => {
@@ -133,6 +143,11 @@ app.post('/newUser', [checkToken, checkAdmin_Role], (req, res) => {
  *      editUserAdmin
  * 
  * The method edit a user by the email.
+ * 
+ * ===========================================
+ * 
+ * El método edita un usuario por su email.
+ * 
  */
 
 app.put('/editUserAdmin', [checkToken, checkAdmin_Role], (req, res) => {
@@ -186,6 +201,11 @@ app.put('/editUserAdmin', [checkToken, checkAdmin_Role], (req, res) => {
  *      editCompanyAdmin
  * 
  * The method edit a company by the email.
+ * 
+ * ===========================================
+ * 
+ * El metodo edita una compañía por su email.
+ * 
  */
 
 app.put('/editCompanyAdmin', [checkToken, checkAdmin_Role], (req, res) => {
@@ -236,6 +256,11 @@ app.put('/editCompanyAdmin', [checkToken, checkAdmin_Role], (req, res) => {
  *      removeAccount
  * 
  * The method delete the account of the user/company by email.
+ * 
+ * =============================================================
+ * 
+ * El método borra la cuenta de un usuario/compañia por email.
+ * 
  */
 
 app.post('/removeAccount', [checkToken, checkAdmin_Role], (req, res) => {
