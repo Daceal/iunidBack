@@ -189,6 +189,32 @@ app.post('/obtainAllProjects', checkToken, (req, res) => {
 
 });
 
+app.post('/obtainProjectsById', checkToken, (req, res) => {
+    let projectId = req.body.id;
+
+    InternalProject.findOne({ _id: projectId }, (err, internalProject) => {
+        if (err) {
+            return res.json({
+                ok: false,
+                err
+            });
+        }
+
+        if (!internalProject) {
+            return res.json({
+                ok: false,
+                message: 'This user doesn´t have a project'
+            });
+        }
+
+        return res.json({
+            ok: true,
+            internalProject
+        });
+    });
+
+});
+
 /**
  * Method name:
  *      obtainProjectNameAndId

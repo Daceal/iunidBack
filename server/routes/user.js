@@ -887,12 +887,12 @@ app.post('/addScore', checkToken, (req, res) => {
  *      projectId, userEmail
  * 
  * The method search a internal project by id and fill a variable with his id and name,
- * then search the user by the email and add a message to the user.
+ * then search the user by the email and add a message.
  * 
  * ====================================================================================
  * 
  * El método busca un proyecto interno por su id y almacena en una variable su id
- * y su nombre, después busca al usuario por su email y le añade un mensaje al usuario.
+ * y su nombre, después busca al usuario por su email y le añade un mensaje.
  * 
  */
 
@@ -908,6 +908,37 @@ app.post('/sendMessageCollaborator', (req, res) => {
             });
         }
 
+        if (project.userOwner === userEmail) {
+            return res.json({
+                ok: false,
+                err: {
+                    message: 'You can´t send a message if you are the owner of the project'
+                }
+            });
+        }
+
+        for (let i = 0; i < project.users.length; i++) {
+            if (project.users[i].userEmail === userEmail) {
+                return res.json({
+                    ok: false,
+                    err: {
+                        message: 'You can´t send a message because the user is in the project'
+                    }
+                });
+            }
+        }
+
+        for (let j = 0; j < project.pendingCounterOffer.length; j++) {
+            if (project.pendingCounterOffer[j].user === userEmail) {
+                return res.json({
+                    ok: false,
+                    err: {
+                        message: 'You can´t send a message because the user is pending to be accepted'
+                    }
+                });
+            }
+        }
+
         let messageProject = {
             "ProjectId": projectId,
             "ProjectName": project.name
@@ -921,19 +952,20 @@ app.post('/sendMessageCollaborator', (req, res) => {
                 });
             }
 
-            InternalProject.findByIdAndUpdate(projectId, { $push: { pendingAccepts: userEmail } }, (err, updateUser) => {
-                if (err) {
+            for (let k = 0; k < userDB.pendingMessages.length; k++) {
+                if (userDB.pendingMessages[k].ProjectId === projectId) {
                     return res.json({
                         ok: false,
-                        err
+                        err: {
+                            message: 'You can´t send a message because this user has an email of this project'
+                        }
                     });
                 }
+            }
 
-                return res.json({
-                    ok: true,
-                    userDB,
-                    updateUser
-                });
+            return res.json({
+                ok: true,
+                userDB
             });
         });
     });
@@ -954,7 +986,7 @@ app.post('/sendMessageCollaborator', (req, res) => {
  * 
  */
 
-app.post('/showMessagesCollaborator', (req, res) => {
+app.post('/showMessagesCollaborator', checkToken, (req, res) => {
     let userEmail = req.body.email;
 
     User.findOne({ email: userEmail }, 'pendingMessages', (err, messages) => {
@@ -987,7 +1019,7 @@ app.post('/showMessagesCollaborator', (req, res) => {
  * 
  */
 
-app.post('/acceptPendingRequestCollaborator', (req, res) => {
+app.post('/acceptPendingRequestCollaborator', checkToken, (req, res) => {
     let projectId = req.body.id;
     let userEmail = req.body.email;
     let user = {
