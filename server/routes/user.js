@@ -7,6 +7,7 @@ const Company = require('../models/company');
 const InternalProject = require('../models/internalProject');
 const ExternalProject = require('../models/externalProject');
 const { checkToken } = require('../middlewares/authentication');
+const ChatConversation = require('../models/chatConversation');
 const app = express();
 
 
