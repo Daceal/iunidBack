@@ -619,7 +619,7 @@ app.post('/acceptPendingRequest', checkToken, (req, res) => {
             });
         }
 
-        ChatConversation.findByIdAndUpdate({ id: acceptRequest.idConversation }, { $push: { members: userEmail } }, (err, chatDB) => {
+        ChatConversation.findByIdAndUpdate({ _id: acceptRequest.idConversation }, { $push: { members: userEmail } }, (err, chatDB) => {
             if (err) {
                 return res.json({
                     ok: false,
@@ -706,7 +706,7 @@ app.post('/kickPerson', checkToken, (req, res) => {
             });
         }
 
-        ChatConversation.findByIdAndUpdate({ id: userKicked.idConversation }, { $pull: { members: userEmail } }, (err, delMember) => {
+        ChatConversation.findByIdAndUpdate({ _id: userKicked.idConversation }, { $pull: { members: userEmail } }, (err, delMember) => {
             if (err) {
                 return res.json({
                     ok: false,
@@ -851,7 +851,7 @@ app.post('/acceptCounterOffer', checkToken, (req, res) => {
             });
         }
 
-        ChatConversation.findByIdAndUpdate({ id: accepted.idConversation }, { $push: { members: userEmail } }, (err, chatDB) => {
+        ChatConversation.findByIdAndUpdate({ _id: accepted.idConversation }, { $push: { members: userEmail } }, (err, chatDB) => {
             if (err) {
                 return res.json({
                     ok: false,

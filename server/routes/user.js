@@ -1046,7 +1046,7 @@ app.post('/acceptPendingRequestCollaborator', checkToken, (req, res) => {
                 });
             }
 
-            ChatConversation.findOneAndUpdate({ id: acceptRequest.idConversation }, { $push: { members: email } }, (err, chatDB) => {
+            ChatConversation.findOneAndUpdate({ _id: acceptRequest.idConversation }, { $push: { members: email } }, (err, chatDB) => {
                 if (err) {
                     return res.json({
                         ok: false,
