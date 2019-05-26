@@ -8,6 +8,7 @@ const InternalProject = require('../models/internalProject');
 const ExternalProject = require('../models/externalProject');
 const { checkToken } = require('../middlewares/authentication');
 const ChatConversation = require('../models/chatConversation');
+const fs = require('fs');
 const app = express();
 
 
@@ -1045,7 +1046,7 @@ app.post('/acceptPendingRequestCollaborator', checkToken, (req, res) => {
                 });
             }
 
-            ChatConversation.findOneAndUpdate({ owner: acceptRequest.userOwner }, { $push: { members: email } }, (err, chatDB) => {
+            ChatConversation.findOneAndUpdate({ id: acceptRequest.idConversation }, { $push: { members: email } }, (err, chatDB) => {
                 if (err) {
                     return res.json({
                         ok: false,
