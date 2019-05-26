@@ -3,18 +3,17 @@ const app = express();
 const ChatConversation = require('../models/chatConversation');
 const path = require('path');
 
-app.get('/chat', function(req, res) {
-    res.redirect('/chat.html');
-});
-
-app.get('/chat2', function(req, res) {
-    res.redirect('/chat2.html');
-});
-
-app.get('/private', function(req, res) {
-    res.redirect('/privateRoom.html')
-});
-
+/**
+ * Method name:
+ *      createConversation
+ * 
+ * Create a conversation for an internal project.
+ * 
+ * ================================================
+ * 
+ * El método crea una conversación para un proyecto interno.
+ * 
+ */
 app.post('/createConversation', (req, res) => {
     let owner = req.body.owner;
     let members = owner;
@@ -41,27 +40,34 @@ app.post('/createConversation', (req, res) => {
     });
 });
 
-/*app.post('/download', (req, res) => {
-    console.log("DENTRO DOWNLOAD")
-    var filePath = path.join(__dirname, '../sockets/uploads/');
-    var fileName = "Grupo.rar";
-    console.log("Path: " + filePath+fileName)
-    res.download(filePath+fileName, fileName, function(err){
-        if (err) {
-          console.log('Error');
-        } else {
-          console.log('success');
-        }
-      });
-});*/
-
+/**
+ * Method name:
+ *      download
+ * 
+ * Download a file from a conversation.
+ * 
+ * ================================================
+ * 
+ * El método descarga un archivo de una conversación.
+ * 
+ */
 app.post("/download", (req, res) => {
     var filePath = path.join(__dirname, '../uploads/filesChat');
     var ruta = filePath + req.body.filename;
     res.sendFile(ruta);
 });
 
-
+/**
+ * Method name:
+ *      getDeliveriesById
+ * 
+ * Get all deliveries from an conversation by id
+ * 
+ * ================================================
+ * 
+ * El método obtiene todas las entregas por id de conversación
+ * 
+ */
 app.post("/getDeliveriesById", (req, res) => {
     let id = req.body.id;
     console.log("ID:" + id);
@@ -79,7 +85,17 @@ app.post("/getDeliveriesById", (req, res) => {
     });
 });
 
-
+/**
+ * Method name:
+ *      getConversationById
+ * 
+ * Get an conversation by id
+ * 
+ * ================================================
+ * 
+ * El método obtiene una conversación por id
+ * 
+ */
 app.post('/getConversationById', (req, res) => {
     let id = req.body.id;
 

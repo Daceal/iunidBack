@@ -952,7 +952,7 @@ app.post('/closeProject', checkToken, (req, res) => {
 });
 
 app.post("/downloadFile", (req, res) => {
-    var filePath = path.join(__dirname, '../uploads/files');
+    var filePath = path.join(__dirname, '../uploads/files/');
     var ruta = filePath + req.body.filename;
     res.sendFile(ruta);
 });

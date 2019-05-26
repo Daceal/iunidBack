@@ -5,14 +5,23 @@ const InternalProject = require('../models/internalProject');
 
 paypal.configure({
     'mode': 'sandbox', //sandbox or live 
-    'client_id': '',
-    'client_secret': ''
+    'client_id': 'AafW8_J0_1S0S2nr10FWJgWWLZKVp6ZZQpGTHhHS-BzABe--81HFIuJkS5e3YSEnDGG4gi2ezQ89ZH3r',
+    'client_secret': 'ENQJSFlAQSKRZsjj6Qab04SPUsXM8pt680OtEQnnVNCJzJe68FrTHnAtKm53qNJoMwyvFFtlIJEtq5Re'
 });
 
-app.get('/paypal', (req, res) => {
-    res.redirect('/index.html');
-});
 
+/**
+ * Method name:
+ *      buy
+ * 
+ * 
+ *   Create pay object and send to paypal
+ * 
+ * ================================================
+ * 
+ *  Este método crea el pago y lo realiza
+ * 
+ */
 app.post('/buy', (req, res) => {
     var amount = req.body.amount;
     var email = req.body.email;
@@ -56,6 +65,18 @@ app.post('/buy', (req, res) => {
         });
 });
 
+/**
+ * Method name:
+ *      success
+ * 
+ * 
+ *   This method handles the success payments that are made within the application.
+ * 
+ * ================================================
+ * 
+ * Este método maneja los pagos que se realizan dentro de la aplicación que son correctos
+ * 
+ */
 app.get('/success', (req, res) => {
     let email = req.query.email;
     let id = req.query.id;
@@ -78,16 +99,25 @@ app.get('/success', (req, res) => {
                         });
                     }
 
-                    return res.json({
-                        ok: true,
-                        project: payChanged
-                    });
+                    res.redirect('/success.html');
                 });
             }
         }
     });
 });
 
+/**
+ * Method name:
+ *      err
+ * 
+ * 
+ *   This method handles the error payments that are made within the application.
+ * 
+ * ================================================
+ * 
+ * Este método maneja los pagos que se realizan dentro de la aplicación que son incorrectos
+ * 
+ */
 // error page 
 app.get('/err', (req, res) => {
     res.redirect('/err.html');

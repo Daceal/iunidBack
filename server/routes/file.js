@@ -7,6 +7,19 @@ const ChatConversation = require('../models/chatConversation');
 const app = express();
 const { io } = require('../server');
 
+
+/**
+ * Method name:
+ *      uploadImage
+ * 
+ * Upload an image to the server.
+ * 
+ * ================================================
+ * 
+ * El método sube una imagen al servidor
+ * 
+ */
+
 // SET STORAGE
 var storage = multer.diskStorage({
     destination: function(req, file, cb) {
@@ -55,7 +68,17 @@ app.post('/uploadImage', upload.single('image'), (req, res, next) => {
     });
 });
 
-
+/**
+ * Method name:
+ *      uploadImage
+ * 
+ * Upload a chat file to the server.
+ * 
+ * ================================================
+ * 
+ * El método sube un archivo de un chat al servidor
+ * 
+ */
 var storageChat = multer.diskStorage({
     destination: function(req, file, cb) {
         cb(null, 'uploads/filesChat')
@@ -66,6 +89,8 @@ var storageChat = multer.diskStorage({
 })
 
 var uploadFile = multer({ storage: storageChat })
+
+
 
 app.post('/uploadFileChat', uploadFile.single('myFile'), (req, res, next) => {
     const file = req.file
@@ -94,7 +119,17 @@ app.post('/uploadFileChat', uploadFile.single('myFile'), (req, res, next) => {
     });
 });
 
-
+/**
+ * Method name:
+ *      uploadFile
+ * 
+ * Upload a internal project file to the server.
+ * 
+ * ================================================
+ * 
+ * El método sube un archivo a un proyecto interno.
+ * 
+ */
 var storageFiles = multer.diskStorage({
     destination: function(req, file, cb) {
         cb(null, 'uploads/files')
@@ -105,6 +140,8 @@ var storageFiles = multer.diskStorage({
 })
 
 var uploadFile = multer({ storage: storageFiles })
+
+
 
 app.post('/uploadFile', uploadFile.single('myFile'), (req, res, next) => {
     const file = req.file
