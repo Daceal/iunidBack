@@ -52,7 +52,7 @@ app.post('/createConversation', (req, res) => {
  * 
  */
 app.post("/download", (req, res) => {
-    var filePath = path.join(__dirname, '../uploads/filesChat');
+    var filePath = path.join(__dirname, '../uploads/filesChat/');
     var ruta = filePath + req.body.filename;
     res.sendFile(ruta);
 });
