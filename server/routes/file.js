@@ -3,6 +3,7 @@ const InternalProject = require('../models/internalProject');
 const multer = require('multer');
 const User = require('../models/user');
 const Company = require('../models/company');
+const ChatConversation = require('../models/chatConversation');
 const app = express();
 const { io } = require('../server');
 
