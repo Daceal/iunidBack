@@ -109,7 +109,7 @@ app.post('/uploadFile', uploadFile.single('myFile'), (req, res, next) => {
     const file = req.file
     let id = req.body.id;
     let fileProject = req.file.filename;
-    InternalProject.findOneAndUpdate({ id: id }, { $push: { files: fileProject } }, (err, projectDB) => {
+    InternalProject.findOneAndUpdate({ _id: id }, { $push: { files: fileProject } }, (err, projectDB) => {
         if (err) {
             return res.json({
                 ok: false,

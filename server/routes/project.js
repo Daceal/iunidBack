@@ -1,9 +1,10 @@
 const express = require('express');
 const InternalProject = require('../models/internalProject');
 const ExternalProject = require('../models/externalProject');
-const { checkToken, checkAdmin_Role } = require('../middlewares/authentication');
+const { checkToken } = require('../middlewares/authentication');
 const ChatConversation = require('../models/chatConversation');
 const app = express();
+const path = require('path');
 
 
 /**
@@ -618,9 +619,28 @@ app.post('/acceptPendingRequest', checkToken, (req, res) => {
             });
         }
 
-        return res.json({
-            ok: true,
-            project: acceptRequest
+        ChatConversation.findOneAndUpdate({ owner: req.body.email }, { $push: { members: userEmail } }, (err, chatDB) => {
+            if (err) {
+                return res.json({
+                    ok: false,
+                    err
+                });
+            }
+
+            if (!chat) {
+                return res.json({
+                    ok: false,
+                    err: {
+                        message: 'The chat not exists'
+                    }
+                });
+            }
+
+            return res.json({
+                ok: true,
+                project: acceptRequest,
+                chat: chatDB
+            });
         });
     });
 });
@@ -821,9 +841,28 @@ app.post('/acceptCounterOffer', checkToken, (req, res) => {
             });
         }
 
-        return res.json({
-            ok: true,
-            project: accepted
+        ChatConversation.findOneAndUpdate({ owner: req.body.email }, { $push: { members: userEmail } }, (err, chatDB) => {
+            if (err) {
+                return res.json({
+                    ok: false,
+                    err
+                });
+            }
+
+            if (!chat) {
+                return res.json({
+                    ok: false,
+                    err: {
+                        message: 'The chat not exists'
+                    }
+                });
+            }
+
+            return res.json({
+                ok: true,
+                project: accepted,
+                chat: chatDB
+            });
         });
     });
 });
@@ -900,6 +939,12 @@ app.post('/closeProject', checkToken, (req, res) => {
             project: closeProject
         });
     });
+});
+
+app.post("/downloadFile", (req, res) => {
+    var filePath = path.join(__dirname, '../uploads/files');
+    var ruta = filePath + req.body.filename;
+    res.sendFile(ruta);
 });
 
 /**

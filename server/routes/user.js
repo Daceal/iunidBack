@@ -1044,10 +1044,29 @@ app.post('/acceptPendingRequestCollaborator', checkToken, (req, res) => {
                 });
             }
 
-            return res.json({
-                ok: true,
-                project: acceptRequest,
-                user: eliminateMessage
+            ChatConversation.findOneAndUpdate({ owner: acceptRequest.userOwner }, { $push: { members: email } }, (err, chatDB) => {
+                if (err) {
+                    return res.json({
+                        ok: false,
+                        err
+                    });
+                }
+
+                if (!chat) {
+                    return res.json({
+                        ok: false,
+                        err: {
+                            message: 'The chat not exists'
+                        }
+                    });
+                }
+
+                return res.json({
+                    ok: true,
+                    project: acceptRequest,
+                    user: eliminateMessage,
+                    chat: chatDB
+                });
             });
         });
     });
