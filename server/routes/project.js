@@ -104,7 +104,7 @@ app.post('/externalProjects', checkToken, (req, res) => {
  * 
  */
 
-app.post('/createInternalProject', (req, res) => {
+app.post('/createInternalProject', checkToken, (req, res) => {
     let email = req.body.email;
     let name = req.body.name;
     let description = req.body.description;
@@ -706,7 +706,7 @@ app.post('/kickPerson', checkToken, (req, res) => {
             });
         }
 
-        ChatConversation.findByIdAndUpdate({ _id: userKicked.idConversation }, { $pull: { members: userEmail } }, (err, delMember) => {
+        ChatConversation.findByIdAndUpdate({ _id: userKicked.idConversation }, { $pull: { members: userEmail.userEmail } }, (err, delMember) => {
             if (err) {
                 return res.json({
                     ok: false,
@@ -859,7 +859,7 @@ app.post('/acceptCounterOffer', checkToken, (req, res) => {
                 });
             }
 
-            if (!chat) {
+            if (!chatDB) {
                 return res.json({
                     ok: false,
                     err: {

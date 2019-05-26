@@ -518,7 +518,7 @@ app.post('/getUser', checkToken, (req, res) => {
  * 
  */
 
-app.post('/getUsersByName', (req, res) => {
+app.post('/getUsersByName', checkToken, (req, res) => {
     let userName = req.body.name;
 
     User.find({ name: userName }, (err, users) => {
@@ -898,7 +898,7 @@ app.post('/addScore', checkToken, (req, res) => {
  * 
  */
 
-app.post('/sendMessageCollaborator', (req, res) => {
+app.post('/sendMessageCollaborator', checkToken, (req, res) => {
     let projectId = req.body.id;
     let userEmail = req.body.userEmail;
 
@@ -1054,7 +1054,7 @@ app.post('/acceptPendingRequestCollaborator', checkToken, (req, res) => {
                     });
                 }
 
-                if (!chat) {
+                if (!chatDB) {
                     return res.json({
                         ok: false,
                         err: {
@@ -1236,7 +1236,7 @@ app.get('/img/:type/:rute', (req, res, next) => {
 
     var rute = req.params.rute;
     var type = req.params.type;
-    var path = `./uploads/${ rute }`;
+    var path = `./uploads/images/${ rute }`;
 
     fs.exists(path, exist => {
         if (!exist) {

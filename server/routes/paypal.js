@@ -15,7 +15,6 @@ app.get('/paypal', (req, res) => {
 
 app.post('/buy', (req, res) => {
     var amount = req.body.amount;
-    var currency = req.body.currency;
     var email = req.body.email;
     var id = req.body.id;
     var dinero = 5;
@@ -31,7 +30,7 @@ app.post('/buy', (req, res) => {
         "transactions": [{
             "amount": {
                 "total": amount,
-                "currency": currency
+                "currency": 'EUR'
             },
             "description": "Pago intermedio"
         }]

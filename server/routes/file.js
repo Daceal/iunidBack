@@ -69,9 +69,9 @@ var uploadFile = multer({ storage: storageChat })
 
 app.post('/uploadFileChat', uploadFile.single('myFile'), (req, res, next) => {
     const file = req.file
-    let email = req.body.email;
+    let id = req.body.id;
     let fileChat = req.file.filename;
-    ChatConversation.findOneAndUpdate({ owner: email }, { $push: { deliveries: fileChat } }, (err, chatConversationDB) => {
+    ChatConversation.findOneAndUpdate({ _id: id }, { $push: { deliveries: fileChat } }, (err, chatConversationDB) => {
         if (err) {
             return res.json({
                 ok: false,
