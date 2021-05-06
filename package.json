@@ -21,6 +21,6 @@
     "paypal-rest-sdk": "^1.8.1",
     "socket.io": "^2.2.0",
     "socketio-file-upload": "^0.7.0",
-    "underscore": "^1.9.1"
+    "underscore": "^1.12.1"
   }
 }
